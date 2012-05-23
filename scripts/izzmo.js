@@ -117,6 +117,92 @@
     },
     init: function() {
       window.izzmo.eventManager.init();
+      window.izzmo.modcli.init();
+    }
+  };
+
+  window.izzmo.utils = {
+    getNameByUserId: function(userId) {
+        return window.izzmo.ttObj.users[userId.toString()].name;
+      },
+
+    getUserIdByName: function(name) {
+      var users = window.izzmo.ttObj.users;
+      for(var i in users) {
+        if(users[i].name.toLowerCase() == $.trim(name.toLowerCase())) {
+          return users[i].userid;
+        }
+      }
+      return 0;
+    }
+  };
+
+  window.izzmo.modcli = {
+    parseInput: function(event) {
+      event.preventDefault();
+        
+      var roomId = window.izzmo.ttObj.roomId;
+      var text = $.trim(window.izzmo.ttObj.nodes.chatText.value);
+
+      // Check for possible command and pass to Turntable of not a command
+      if(!/^\//.test(text)) {window.izzmo.modcli.pass(event);return}
+
+      // boot
+      if(/^\/boot .+/.test(text)) {
+
+        // Get names
+        var names = text.split(" /")[0].split(' @');
+        names.shift();
+        if(names.length <= 0) {
+          console.log("You specified no users to boot");
+          window.izzmo.modcli.resetInput();
+          return;
+        }
+        // Get Reason
+        var reason = text.split(" /")[1] == undefined ? "" : text.split(" /")[1];
+
+        // Get UserIds
+        for(var i = 0; i < names.length; i++) {
+          if(window.izzmo.utils.getUserIdByName($.trim(names[i]))) {
+            
+            // Create API request object
+            var bootRequest = {
+              api:"room.boot_user",
+              roomid: roomId,
+              target_userid: window.izzmo.utils.getUserIdByName(names[i])
+            };
+            if(reason != "") bootRequest.reason = reason;
+
+            // Send Request
+            window.izzmo.socket(bootRequest);
+            console.log("Booting " + names[i]);
+          } else {
+            // Couldn't find user
+            console.log("No user found by " + names[i]);
+          }
+        }
+
+        window.izzmo.modcli.resetInput();
+        return;
+      }
+
+      // Remove DJ
+
+      window.izzmo.modcli.pass(event);
+    },
+
+    resetInput: function() {
+      window.izzmo.ttObj.nodes.chatText.value = "";
+    },
+
+    pass: function(event) {
+      window.izzmo.ttObj.speak(event);
+    },
+
+    init: function() {
+      // Unbind Turntable's handler and bind our handler
+      $(window.izzmo.ttObj.nodes.chatForm).unbind('submit');
+      $(window.izzmo.ttObj.nodes.chatForm).submit(window.izzmo.modcli.parseInput);
     }
   };
 
@@ -348,11 +434,13 @@
           break;
       }
       
-      html = $('<div id="desc-' + type + '" ' + ((!userList.length) ? 'style="display:none;"' : '') + '><div class="desc"' + ((type == 'super') ? ' style="display: none;"' : '') + '>' + title + '</div></div>');
+      groupContainer = $('<div id="desc-' + type + '" ' + ((!userList.length) ? 'style="display:none;"' : '') + '></div>');
+      groupHeader = $('<div class="desc black-right-header"' + ((type == 'super') ? ' style="display: none;"' : '') + '><div class="desc-inner header-text">' + title + '</div></div>');
+      groupContainer.append(groupHeader);
       $.each(userList, function(i, v) {
-        html.append(window.izzmo.ui.guestListGetUserHtml(type, v));
+        groupContainer.append(window.izzmo.ui.guestListGetUserHtml(type, v));
       });
-      obj.append(html);
+      obj.append(groupContainer);
     },
     guestListAddUser: function(user) {
       var type, $s;
@@ -918,6 +1006,9 @@
         $right = $('#right-panel'),
         height = $room.height(),
         width = $room.width();
+
+    // Set UI Title
+    $('.playlist-container:first div.header-text:first').html('Turntable Enhanced');
     
     // rewrite guest list update function
     window.izzmo.ttObj.__updateGuestList = window.izzmo.ttObj.updateGuestList;
@@ -1078,7 +1169,7 @@
     
     // add settings button to menu
     $('#izzmo-settings-menu-settings').remove();
-    $('#menuh').find('div.menuItem').last().before('<div id="izzmo-settings-menu-settings" class="menuItem">Izzmo\'s UI Settings</div>');
+    $('#menuh').find('div.menuItem').last().before('<div id="izzmo-settings-menu-settings" class="menuItem">TTEnhanced</div>');
     $('#izzmo-settings-menu-settings').bind('click', function() {
       var settings = $(util.buildTree(
         ["div#izzui-settings.settingsOverlay.modal", {},
