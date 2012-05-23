@@ -70,7 +70,7 @@ var switchDisplay = function(type) {
 var script = document.createElement('script');
     script.type = 'text/javascript';
     script.id = 'izzui';
-    script.src = chrome.extension.getURL('/scripts/izzmo.js') + "?" + Date.now();
+    script.src = chrome.extension.getURL('/scripts/tte.js') + "?" + Date.now();
     document.head.appendChild(script);
     
     script = document.createElement('link');
