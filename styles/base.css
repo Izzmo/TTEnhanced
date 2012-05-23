@@ -1,0 +1,203 @@
+
+.guest-list-container .guests .voteup:nth-child(odd) {
+  background-image: linear-gradient(right, rgb(255,255,255) 10%, rgb(180,217,180) 100%);
+  background-image: -o-linear-gradient(right, rgb(255,255,255) 10%, rgb(180,217,180) 100%);
+  background-image: -moz-linear-gradient(right, rgb(255,255,255) 10%, rgb(180,217,180) 100%);
+  background-image: -webkit-linear-gradient(right, rgb(255,255,255) 10%, rgb(180,217,180) 100%);
+  background-image: -ms-linear-gradient(right, rgb(255,255,255) 10%, rgb(180,217,180) 100%);
+
+  background-image: -webkit-gradient(
+    linear,
+    right top,
+    left top,
+    color-stop(0.1, rgb(255,255,255)),
+    color-stop(1, rgb(180,217,180))
+  );
+}
+
+.guest-list-container .guests .voteup:nth-child(even) {
+  background-image: linear-gradient(right, rgb(238,238,238) 10%, rgb(180,217,180) 100%);
+  background-image: -o-linear-gradient(right, rgb(238,238,238) 10%, rgb(180,217,180) 100%);
+  background-image: -moz-linear-gradient(right, rgb(238,238,238) 10%, rgb(180,217,180) 100%);
+  background-image: -webkit-linear-gradient(right, rgb(238,238,238) 10%, rgb(180,217,180) 100%);
+  background-image: -ms-linear-gradient(right, rgb(238,238,238) 10%, rgb(180,217,180) 100%);
+
+  background-image: -webkit-gradient(
+    linear,
+    right top,
+    left top,
+    color-stop(0.1, rgb(238,238,238)),
+    color-stop(1, rgb(180,217,180))
+  );
+}
+
+.guest-list-container .guests .votedown:nth-child(odd) {
+  background-image: linear-gradient(right, rgb(255,255,255) 10%, rgb(217, 0, 17) 100%);
+  background-image: -o-linear-gradient(right, rgb(255,255,255) 10%, rgb(217, 0, 17) 100%);
+  background-image: -moz-linear-gradient(right, rgb(255,255,255) 10%, rgb(217, 0, 17) 100%);
+  background-image: -webkit-linear-gradient(right, rgb(255,255,255) 10%, rgb(217, 0, 17) 100%);
+  background-image: -ms-linear-gradient(right, rgb(255,255,255) 10%, rgb(217, 0, 17) 100%);
+
+  background-image: -webkit-gradient(
+    linear,
+    right top,
+    left top,
+    color-stop(0.1, rgb(255,255,255)),
+    color-stop(1, rgb(217, 0, 17))
+  );
+}
+
+.guest-list-container .guests .votedown:nth-child(even) {
+  background-image: linear-gradient(right, rgb(238,238,238) 10%, rgb(217, 0, 17) 100%);
+  background-image: -o-linear-gradient(right, rgb(238,238,238) 10%, rgb(217, 0, 17) 100%);
+  background-image: -moz-linear-gradient(right, rgb(238,238,238) 10%, rgb(217, 0, 17) 100%);
+  background-image: -webkit-linear-gradient(right, rgb(238,238,238) 10%, rgb(217, 0, 17) 100%);
+  background-image: -ms-linear-gradient(right, rgb(238,238,238) 10%, rgb(217, 0, 17) 100%);
+
+  background-image: -webkit-gradient(
+    linear,
+    right top,
+    left top,
+    color-stop(0.1, rgb(238,238,238)),
+    color-stop(1, rgb(217, 0, 17))
+  );
+}
+
+.guest-list-container .guests .icons,
+.guest-list-container .guests .idletime {
+  float: right;
+}
+
+.guest-list-container .guests .icons img {
+  padding: 0 2px;
+  vertical-align: text-bottom;
+}
+
+.guest-list-container .guests .desc {
+  font-weight: bold;
+  font-size: 12px;
+  border-bottom: 1px solid black;
+  padding: 5px;
+  text-shadow: 0 1px 0 #C6C6C6;
+  height: 12px;
+  text-align: center;  
+  background-image: linear-gradient(bottom, #C5C5C5 10%, #9D9D9D 100%);
+  background-image: -o-linear-gradient(bottom, #C5C5C5 10%, #9D9D9D 100%);
+  background-image: -moz-linear-gradient(bottom, #C5C5C5 10%, #9D9D9D 100%);
+  background-image: -ms-linear-gradient(bottom, #C5C5C5 10%, #9D9D9D 100%);
+  background-image: -webkit-linear-gradient(bottom, #C5C5C5 10%, #9D9D9D 100%);
+}
+
+#top-panel .votes {
+  float: right;
+  margin: 6px 15px 0 0;
+}
+
+#top-panel .votes span {
+  font-size: 24px;
+  margin-right: 5px;
+}
+
+#top-panel .votes img {
+  vertical-align: text-bottom;
+}
+
+#playlist .guestListSize {
+  width: 233px;
+  left: -1px;
+}
+
+#menuh #izzmo-settings-menu-animations-icon {
+  background-image: url(http://www.pinnacleofdestruction.net/tt/images/check.png);
+  width: 16px;
+  height: 16px;
+}
+
+#izzui-settings div.fields > div {
+  padding: 5px;
+}
+
+#izzui-settings div.fields div span,
+#izzui-settings div.spots div span {
+  float: left;
+}
+
+#izzui-settings div.fields div div {
+  padding-right: 40px;
+  text-align: right;
+}
+
+#izzui-settings div.fields div div input:last-child {
+  margin-left: 15px;
+}
+
+#izzui-settings div.spots div {
+  margin-top: 10px;
+}
+
+#izzui-settings #djs {
+  padding-top: 10px;
+}
+
+#izzui-settings div.spots p {
+  font-size: 13px;
+  text-align: left;
+  padding: 5px 0;
+}
+
+#izzui-settings div.spots #user {
+  width: 200px;
+}
+
+#izzui-settings div.save-changes {
+  margin-top: 20px;
+}
+
+#izzui-settings #djs {
+  list-style: none;
+}
+
+#izzui-settings #djs span {
+  float: none;
+}
+
+div.guestOptionsContainer {
+  z-index: 36000;
+}
+
+div.modal ul li {
+  font-size: 14px;
+  font-weight: bold;
+  padding-bottom: 10px;
+}
+
+div.modal ul > li ul {
+  margin-left: 20px;
+}
+
+div.modal ul > li li {
+  font-size: 12px;
+  font-weight: normal;
+}
+
+#overlay div.settingsOverlay .fields div > p {
+  font-size: 12px;
+}
+
+#overlay #keywords {
+  list-style: none;
+}
+
+#overlay #keywords li {
+  float: left;
+  margin-right: 10px;
+}
+
+#overlay #keywords li a {
+  padding-left: 5px;
+}
+
+#overlay #userNoteField {
+  width: 300px;
+  height: 100px;
+}

@@ -1,0 +1,51 @@
+#outer {
+  width: 1300px;
+}
+
+#outer div.chat-container,
+#turntable .roomView div.chat-container .chatBar,
+#turntable .roomView div.chat-container .chatBar form.input-box {
+  width: 307px;
+}
+
+#outer div.guest-list-container {
+  width: 233px;
+  margin-left: 0px;
+}
+
+#outer div.chat-container .messages .message {
+  width: auto;
+}
+
+#turntable .roomView .guestListButton {
+  display: none;
+}
+
+#turntable .roomView div.guest-list-container div.chatBar .guestListSize,
+#turntable .roomView div.chat-container .chatBar form.input-box {
+  left: -1px;
+  width: 233px;
+}
+
+#turntable .roomView div.chat-container .chatBar form.input-box {
+  background: none;
+}
+
+#turntable .roomView div.chat-container .chatBar form.input-box input {
+  background: #FFF;
+  border: #FFF inset 2px;
+  width: 265px;
+}
+
+.chatHeader {
+  cursor: default;
+}
+
+.chatResizeIcon {
+  display: none;
+}
+
+#top-panel .votes {
+  float: right;
+  margin: 6px 40px 0 0;
+}
