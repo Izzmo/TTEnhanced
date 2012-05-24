@@ -202,3 +202,8 @@ div.modal ul > li li {
   width: 300px;
   height: 100px;
 }
+
+div.tteTrackHistoryVotes {
+  font-size: 10px;
+  text-align: center;
+}
