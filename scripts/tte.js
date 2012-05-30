@@ -117,6 +117,174 @@
     },
     init: function() {
       window.izzmo.eventManager.init();
+      window.izzmo.modcli.init();
+    }
+  };
+
+  window.izzmo.utils = {
+    getNameByUserId: function(userId) {
+        return window.izzmo.ttObj.users[userId.toString()].name;
+      },
+
+    getUserIdByName: function(name) {
+      var users = window.izzmo.ttObj.users;
+      for(var i in users) {
+        if(users[i].name.toLowerCase() == $.trim(name.toLowerCase())) {
+          return users[i].userid;
+        }
+      }
+      return 0;
+    },
+
+    isNumeric: function(vTestValue)
+    {
+      // put the TEST value into a string object variable
+      var sField = new String($.trim(vTestValue));
+      
+      // check for a length of 0 - if so, return false
+      if(sField.length==0) { return false; }
+      else if(sField.length==1 && (sField.charAt(0) == '.' || sField.charAt(0) == ',' || (sField.charAt(0) == '-'))) { return false; }
+      
+      // loop through each character of the string
+      for(var x=0; x < sField.length; x++) {
+        // if the character is < 0 or > 9, return false (not a number)
+        if((sField.charAt(x) >= '0' && sField.charAt(x) <= '9') || sField.charAt(x) == '.' || sField.charAt(x) == ',' || (sField.charAt(x) == '-' && x==0)) { /* do nothing */ }
+        else { return false; }
+      }
+      
+      // made it through the loop - we have a number
+      return true;
+    }
+  };
+
+  window.izzmo.modcli = {
+    parseInput: function(event) {
+      event.preventDefault();
+        
+      var roomId = window.izzmo.ttObj.roomId;
+      var text = $.trim(window.izzmo.ttObj.nodes.chatText.value);
+      var args = [];
+
+      // Check for possible command and pass to Turntable of not a command
+      if(!/^\//.test(text) || !window.izzmo.ttObj.isMod()) {window.izzmo.modcli.pass(event);return}
+
+      // boot
+      if(/^\/boot .+/.test(text) || /^\/b .+/.test(text)) {
+
+        // Get args
+        args = text.split(" /")[0].split(' @');
+        args.shift();
+        if(args.length <= 0) {
+          console.log("You specified no users to boot");
+          window.izzmo.modcli.resetInput();
+          return;
+        }
+        // Get Reason
+        var reason = text.split(" /")[1] == undefined ? "" : text.split(" /")[1];
+
+        // Get UserIds
+        for(var i = 0; i < args.length; i++) {
+          if(window.izzmo.utils.getUserIdByName($.trim(args[i]))) {
+            
+            // Create API request object
+            var bootRequest = {
+              api: "room.boot_user",
+              roomid: roomId,
+              target_userid: window.izzmo.utils.getUserIdByName(args[i])
+            };
+            if(reason != "") bootRequest.reason = reason;
+
+            // Send Request
+            window.izzmo.socket(bootRequest);
+            console.log("Booting " + args[i]);
+          } else {
+            // Couldn't find user
+            console.log("No user found by " + args[i]);
+          }
+        }
+
+        window.izzmo.modcli.resetInput();
+        return;
+      }
+
+      // Remove DJ by name
+      if(/^\/removedj .+/.test(text) || /^\/rmdj .+/.test(text)) {
+
+        // Get args
+        args = text.split(' @');
+        args.shift();
+        if(args.length <= 0) {
+          console.log("You specified no djs to remove");
+          window.izzmo.modcli.resetInput();
+          return;
+        }
+
+        // Get DJ Ids
+        for(var i = 0; i < args.length; i++) {
+          if(args[i] != "" && window.izzmo.utils.getUserIdByName($.trim(args[i])) && window.izzmo.ttObj.isDj(window.izzmo.utils.getUserIdByName($.trim(args[i])))) {
+
+            // Create API request object
+            var removeDjRequest = {
+              api: "room.rem_dj",
+              roomid: roomId,
+              djid: window.izzmo.utils.getUserIdByName($.trim(args[i]))
+            };
+            window.izzmo.socket(removeDjRequest);
+            console.log("Removing " + args[i]);
+          } else {
+            // Couldn't find user
+            if(args[i] != "") console.log('No DJ found by ' + args[i])
+          }
+        }
+
+        window.izzmo.modcli.resetInput();
+        return;
+      }
+
+      // Remove DJ by number
+      if(/^\/removedjnum .+/.test(text) || /^\/rmdjn .+/.test(text)) {
+
+        // Get Numbers
+        args = text.split(' ');
+        args.shift();
+
+        for(var i = 0; i < args.length; i++) {
+          if(window.izzmo.utils.isNumeric(args[i])) {
+            if(args[i] > 0 && args[i] < window.izzmo.ttObj.maxDjs) {
+              var removeDjByNumberRequest = {
+                api: "room.rem_dj",
+                roomid: roomId,
+                djid: $('.avatar_laptop:eq(' + (args[i] - 1) + ')').attr("data-userid")
+              }
+              window.izzmo.socket(removeDjRequest);
+              console.log("Removing " + window.izzmo.utils.getNameByUserId($('.avatar_laptop:eq(' + (args[i] - 1) + ')').attr("data-userid")));
+            } else {
+              if(args[i] != "") console.log('No DJ found at position ' + args[i]);
+            }
+          } else {
+            if(args[i] != "") console.log('value is not numeric: ' + args[i]);
+          }
+        }
+
+        window.izzmo.modcli.resetInput();
+        return;
+      }
+
+      window.izzmo.modcli.pass(event);
+    },
+
+    resetInput: function() {
+      window.izzmo.ttObj.nodes.chatText.value = "";
+    },
+
+    pass: function(event) {
+      window.izzmo.ttObj.speak(event);
+    },
+
+    init: function() {
+      // Unbind Turntable's handler and bind our handler
+      $(window.izzmo.ttObj.nodes.chatForm).unbind('submit');
+      $(window.izzmo.ttObj.nodes.chatForm).submit(window.izzmo.modcli.parseInput);
     }
   };
 
@@ -132,18 +300,30 @@
                   +'<li>Bug Fix: Updated settings screen so it is easier to see that you need to press enter to enter custom notifications.</li>'
                   +'<li>Bug Fix: When updating from a previous version, the guest list and/or chat would overlay one another.</li>'
                   +'</ul>',
+
+    upvotes: 0,
+    downvotes: 0,
+    snags: 0,
+
     listener: function(d) {
       switch(d.command) {
         case 'snagged':
           var val = parseInt(window.izzmo.ui.votes.find('span:last-child').html());
           window.izzmo.ui.votes.find('span:last-child').html(++val);
           window.izzmo.isAfk(d.senderid);
+
+          // Update Snag count
+          window.izzmo.ui.snags += 1;
+          window.izzmo.ui.updateVoteDisplays(window.izzmo.ui.upvotes,window.izzmo.ui.downvotes,window.izzmo.ui.snags,-1);
           break;
           
         case 'update_votes':
           $(window.izzmo.ui.votes.find('span')[1]).html(d.room.metadata.upvotes);
           $(window.izzmo.ui.votes.find('span')[0]).html(d.room.metadata.downvotes);
           
+          // Get upvotes count
+          window.izzmo.ui.upvotes = d.room.metadata.upvotes;
+
           var $user = $('#' + d.room.metadata.votelog[0][0]);
           if(!$user.length)
             $user = guestListAddUser(d.room.metadata.votelog[0][0]);
@@ -152,11 +332,17 @@
             var pos = $.inArray(d.room.metadata.votelog[0][0], window.izzmo.downvoters)
             if(pos >= 0)
               delete window.izzmo.downvoters[pos];
+
+            // Reconcile downvotes
+            window.izzmo.ui.downvotes = d.room.metadata.downvotes;
           }
           else {
             $user.addClass('votedown').removeClass('voteup');
             if($.inArray(d.room.metadata.votelog[0][0], window.izzmo.downvoters) == -1)
               window.izzmo.downvoters.push(d.room.metadata.votelog[0][0]);
+
+            // Update downvote tally
+            window.izzmo.ui.downvotes += 1;
           }
           window.izzmo.isAfk(d.room.metadata.votelog[0][0]);
           break;
@@ -168,6 +354,12 @@
           window.izzmo.downvoters = [];
           window.izzmo.ui.guestList();
           window.izzmo.ui.updateSongCount();
+
+          // Reset Vote Counts
+          window.izzmo.ui.upvotes = 0;
+          window.izzmo.ui.downvotes = 0;
+          window.izzmo.ui.snags = 0;
+
           break;
           
         case 'registered':
@@ -269,6 +461,39 @@
           break;
       }
     },
+
+    override_set_dj_points: function(points) {
+      setTimeout(function(){window.izzmo.ui.updateVoteDisplays(window.izzmo.ui.upvotes,window.izzmo.ui.downvotes,window.izzmo.ui.snags,points);},250);
+    },
+
+    updateVoteDisplays: function(upvotes,downvotes,snags,points) {
+      if(points < 0) {points = Number(window.izzmo.ttRoomObjs.current_dj[3].html().split(" ")[0].replace(',',''));}
+      var suffix = " points";
+      suffix += "<br/>+" + upvotes.toString();
+      suffix += " / -" + downvotes.toString();
+      suffix += " / &#9829;" + snags.toString();
+
+      // Dj Display
+      if(window.izzmo.ttRoomObjs.current_dj)
+      {
+        window.izzmo.ttRoomObjs.current_dj[3].show();
+        window.izzmo.ttRoomObjs.current_dj[3].html(window.izzmo.ttRoomObjs.commafy(points) + suffix);
+        window.izzmo.ttRoomObjs.current_dj[4].points = points;
+      }
+
+      // Song List Display
+      if($('div.songlog:first div.song:first div.tteTrackHistoryVotes:first').length <= 0)
+      {
+        var content = $('<div class="tteTrackHistoryVotes"> </div>');
+        content.css({
+          fontSize:"10px",
+          textAlign:"center"
+        });
+        $('div.songlog:first div.song:first div.songinfo:first').append(content);
+      }
+      $('div.songlog:first div.song:first div.tteTrackHistoryVotes:first').html('+' + upvotes + '/-' + downvotes + '<br/>&#9829; ' + snags);
+    },
+
     numUsers: function() {
       var count = 0;
       for(var prop in window.izzmo.ttObj.users)
@@ -348,11 +573,13 @@
           break;
       }
       
-      html = $('<div id="desc-' + type + '" ' + ((!userList.length) ? 'style="display:none;"' : '') + '><div class="desc"' + ((type == 'super') ? ' style="display: none;"' : '') + '>' + title + '</div></div>');
+      groupContainer = $('<div id="desc-' + type + '" ' + ((!userList.length) ? 'style="display:none;"' : '') + '></div>');
+      groupHeader = $('<div class="desc black-right-header"' + ((type == 'super') ? ' style="display: none;"' : '') + '><div class="desc-inner header-text">' + title + '</div></div>');
+      groupContainer.append(groupHeader);
       $.each(userList, function(i, v) {
-        html.append(window.izzmo.ui.guestListGetUserHtml(type, v));
+        groupContainer.append(window.izzmo.ui.guestListGetUserHtml(type, v));
       });
-      obj.append(html);
+      obj.append(groupContainer);
     },
     guestListAddUser: function(user) {
       var type, $s;
@@ -918,6 +1145,9 @@
         $right = $('#right-panel'),
         height = $room.height(),
         width = $room.width();
+
+    // Set UI Title
+    $('.playlist-container:first div.header-text:first').html('Turntable Enhanced');
     
     // rewrite guest list update function
     window.izzmo.ttObj.__updateGuestList = window.izzmo.ttObj.updateGuestList;
@@ -934,6 +1164,9 @@
         window.izzmo.ui.guestList();
       }, 2000);
     }
+
+    // override set_dj_points
+    window.izzmo.ttRoomObjs.set_dj_points = window.izzmo.ui.override_set_dj_points;
     
     turntable.addEventListener("message", window.izzmo.ui.listener);
     
@@ -1078,7 +1311,7 @@
     
     // add settings button to menu
     $('#izzmo-settings-menu-settings').remove();
-    $('#menuh').find('div.menuItem').last().before('<div id="izzmo-settings-menu-settings" class="menuItem">Izzmo\'s UI Settings</div>');
+    $('#menuh').find('div.menuItem').last().before('<div id="izzmo-settings-menu-settings" class="menuItem">TTEnhanced</div>');
     $('#izzmo-settings-menu-settings').bind('click', function() {
       var settings = $(util.buildTree(
         ["div#izzui-settings.settingsOverlay.modal", {},

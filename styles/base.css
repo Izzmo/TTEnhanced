@@ -74,19 +74,20 @@
 }
 
 .guest-list-container .guests .desc {
-  font-weight: bold;
-  font-size: 12px;
-  border-bottom: 1px solid black;
-  padding: 5px;
-  text-shadow: 0 1px 0 #C6C6C6;
-  height: 12px;
-  text-align: center;  
-  background-image: linear-gradient(bottom, #C5C5C5 10%, #9D9D9D 100%);
-  background-image: -o-linear-gradient(bottom, #C5C5C5 10%, #9D9D9D 100%);
-  background-image: -moz-linear-gradient(bottom, #C5C5C5 10%, #9D9D9D 100%);
-  background-image: -ms-linear-gradient(bottom, #C5C5C5 10%, #9D9D9D 100%);
-  background-image: -webkit-linear-gradient(bottom, #C5C5C5 10%, #9D9D9D 100%);
+  height:auto;
+  cursor:pointer;
 }
+
+.guest-list-container .guests .desc .desc-inner {
+  font-size: 10px;
+  left: auto;
+  margin: 4px auto;
+  padding-left: 30px;
+  position: relative;
+  top: auto;
+}
+
+
 
 #top-panel .votes {
   float: right;
@@ -200,4 +201,9 @@ div.modal ul > li li {
 #overlay #userNoteField {
   width: 300px;
   height: 100px;
+}
+
+div.tteTrackHistoryVotes {
+  font-size: 10px;
+  text-align: center;
 }
