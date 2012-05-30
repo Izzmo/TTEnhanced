@@ -1,9 +1,9 @@
 (function() {
-  if(window.izzmo != undefined && window.izzmo.ui != undefined) {
-    turntable.removeEventListener("message", window.izzmo.ui.listener);
+  if(window.tte != undefined && window.tte.ui != undefined) {
+    turntable.removeEventListener("message", window.tte.ui.listener);
   }
   
-  window.izzmo = {
+  window.tte = {
     ttObj: null,
     attempts: 0,
     timers: [],
@@ -19,22 +19,22 @@
       boot_linkers: true
     },
     isAfk: function(uid) {
-      for(var prop in window.izzmo.timers) {
-        if(window.izzmo.timers[prop].userid == uid) {
-          var afk = (window.izzmo.timers[prop].time <= ((new Date().getTime()) - 600000));
-          window.izzmo.timers[prop].time = new Date().getTime();
+      for(var prop in window.tte.timers) {
+        if(window.tte.timers[prop].userid == uid) {
+          var afk = (window.tte.timers[prop].time <= ((new Date().getTime()) - 600000));
+          window.tte.timers[prop].time = new Date().getTime();
           return afk;
         }
       }
       // person doesn't exist in array, so add them
-      window.izzmo.timers.push({userid: uid, time: new Date().getTime()});
+      window.tte.timers.push({userid: uid, time: new Date().getTime()});
       return false;
     },
     getAfkTime: function(uid) {
       var t = (new Date()).getTime();
-      for(var prop in window.izzmo.timers) {
-        if(window.izzmo.timers[prop].userid == uid) {
-          t = window.izzmo.timers[prop].time;
+      for(var prop in window.tte.timers) {
+        if(window.tte.timers[prop].userid == uid) {
+          t = window.tte.timers[prop].time;
           break;
         }
       }
@@ -97,37 +97,37 @@
       event: document.createEvent("Event"),
       messages: [],
       queue: function(params, callback) {
-        var msgId = window.izzmo.eventManager.messages.push(callback),
+        var msgId = window.tte.eventManager.messages.push(callback),
             data = $.extend({'msgId': msgId}, params);
-        $('#izzui-msg').html(JSON.stringify(data))[0].dispatchEvent(window.izzmo.eventManager.event);
+        $('#izzui-msg').html(JSON.stringify(data))[0].dispatchEvent(window.tte.eventManager.event);
       },
       init: function() {
         // setup event handler
-        window.izzmo.eventManager.event.initEvent("izzEventWeb", true, true);
+        window.tte.eventManager.event.initEvent("izzEventWeb", true, true);
         $('#izzui-msg').bind('izzEventExt', function() {
           var data = JSON.parse($(this).html()),
-              func = window.izzmo.eventManager.messages[data.msgId-1];
+              func = window.tte.eventManager.messages[data.msgId-1];
           console.log('Received from extension: ');
           console.log(data);
           if(func != undefined)
             func(data);
-          delete window.izzmo.eventManager.messages[data.msgId-1];
+          delete window.tte.eventManager.messages[data.msgId-1];
         });
       }
     },
     init: function() {
-      window.izzmo.eventManager.init();
-      window.izzmo.modcli.init();
+      window.tte.eventManager.init();
+      window.tte.modcli.init();
     }
   };
 
-  window.izzmo.utils = {
+  window.tte.utils = {
     getNameByUserId: function(userId) {
-        return window.izzmo.ttObj.users[userId.toString()].name;
+        return window.tte.ttObj.users[userId.toString()].name;
       },
 
     getUserIdByName: function(name) {
-      var users = window.izzmo.ttObj.users;
+      var users = window.tte.ttObj.users;
       for(var i in users) {
         if(users[i].name.toLowerCase() == $.trim(name.toLowerCase())) {
           return users[i].userid;
@@ -157,16 +157,16 @@
     }
   };
 
-  window.izzmo.modcli = {
+  window.tte.modcli = {
     parseInput: function(event) {
       event.preventDefault();
         
-      var roomId = window.izzmo.ttObj.roomId;
-      var text = $.trim(window.izzmo.ttObj.nodes.chatText.value);
+      var roomId = window.tte.ttObj.roomId;
+      var text = $.trim(window.tte.ttObj.nodes.chatText.value);
       var args = [];
 
       // Check for possible command and pass to Turntable of not a command
-      if(!/^\//.test(text) || !window.izzmo.ttObj.isMod()) {window.izzmo.modcli.pass(event);return}
+      if(!/^\//.test(text) || !window.tte.ttObj.isMod()) {window.tte.modcli.pass(event);return}
 
       // boot
       if(/^\/boot .+/.test(text) || /^\/b .+/.test(text)) {
@@ -176,7 +176,7 @@
         args.shift();
         if(args.length <= 0) {
           console.log("You specified no users to boot");
-          window.izzmo.modcli.resetInput();
+          window.tte.modcli.resetInput();
           return;
         }
         // Get Reason
@@ -184,18 +184,18 @@
 
         // Get UserIds
         for(var i = 0; i < args.length; i++) {
-          if(window.izzmo.utils.getUserIdByName($.trim(args[i]))) {
+          if(window.tte.utils.getUserIdByName($.trim(args[i]))) {
             
             // Create API request object
             var bootRequest = {
               api: "room.boot_user",
               roomid: roomId,
-              target_userid: window.izzmo.utils.getUserIdByName(args[i])
+              target_userid: window.tte.utils.getUserIdByName(args[i])
             };
             if(reason != "") bootRequest.reason = reason;
 
             // Send Request
-            window.izzmo.socket(bootRequest);
+            window.tte.socket(bootRequest);
             console.log("Booting " + args[i]);
           } else {
             // Couldn't find user
@@ -203,7 +203,7 @@
           }
         }
 
-        window.izzmo.modcli.resetInput();
+        window.tte.modcli.resetInput();
         return;
       }
 
@@ -215,21 +215,21 @@
         args.shift();
         if(args.length <= 0) {
           console.log("You specified no djs to remove");
-          window.izzmo.modcli.resetInput();
+          window.tte.modcli.resetInput();
           return;
         }
 
         // Get DJ Ids
         for(var i = 0; i < args.length; i++) {
-          if(args[i] != "" && window.izzmo.utils.getUserIdByName($.trim(args[i])) && window.izzmo.ttObj.isDj(window.izzmo.utils.getUserIdByName($.trim(args[i])))) {
+          if(args[i] != "" && window.tte.utils.getUserIdByName($.trim(args[i])) && window.tte.ttObj.isDj(window.tte.utils.getUserIdByName($.trim(args[i])))) {
 
             // Create API request object
             var removeDjRequest = {
               api: "room.rem_dj",
               roomid: roomId,
-              djid: window.izzmo.utils.getUserIdByName($.trim(args[i]))
+              djid: window.tte.utils.getUserIdByName($.trim(args[i]))
             };
-            window.izzmo.socket(removeDjRequest);
+            window.tte.socket(removeDjRequest);
             console.log("Removing " + args[i]);
           } else {
             // Couldn't find user
@@ -237,7 +237,7 @@
           }
         }
 
-        window.izzmo.modcli.resetInput();
+        window.tte.modcli.resetInput();
         return;
       }
 
@@ -249,15 +249,15 @@
         args.shift();
 
         for(var i = 0; i < args.length; i++) {
-          if(window.izzmo.utils.isNumeric(args[i])) {
-            if(args[i] > 0 && args[i] < window.izzmo.ttObj.maxDjs) {
+          if(window.tte.utils.isNumeric(args[i])) {
+            if(args[i] > 0 && args[i] < window.tte.ttObj.maxDjs) {
               var removeDjByNumberRequest = {
                 api: "room.rem_dj",
                 roomid: roomId,
                 djid: $('.avatar_laptop:eq(' + (args[i] - 1) + ')').attr("data-userid")
               }
-              window.izzmo.socket(removeDjRequest);
-              console.log("Removing " + window.izzmo.utils.getNameByUserId($('.avatar_laptop:eq(' + (args[i] - 1) + ')').attr("data-userid")));
+              window.tte.socket(removeDjRequest);
+              console.log("Removing " + window.tte.utils.getNameByUserId($('.avatar_laptop:eq(' + (args[i] - 1) + ')').attr("data-userid")));
             } else {
               if(args[i] != "") console.log('No DJ found at position ' + args[i]);
             }
@@ -266,29 +266,29 @@
           }
         }
 
-        window.izzmo.modcli.resetInput();
+        window.tte.modcli.resetInput();
         return;
       }
 
-      window.izzmo.modcli.pass(event);
+      window.tte.modcli.pass(event);
     },
 
     resetInput: function() {
-      window.izzmo.ttObj.nodes.chatText.value = "";
+      window.tte.ttObj.nodes.chatText.value = "";
     },
 
     pass: function(event) {
-      window.izzmo.ttObj.speak(event);
+      window.tte.ttObj.speak(event);
     },
 
     init: function() {
       // Unbind Turntable's handler and bind our handler
-      $(window.izzmo.ttObj.nodes.chatForm).unbind('submit');
-      $(window.izzmo.ttObj.nodes.chatForm).submit(window.izzmo.modcli.parseInput);
+      $(window.tte.ttObj.nodes.chatForm).unbind('submit');
+      $(window.tte.ttObj.nodes.chatForm).submit(window.tte.modcli.parseInput);
     }
   };
 
-  window.izzmo.ui = {
+  window.tte.ui = {
     settings: {
       animations: true,
       favorites: [],
@@ -308,114 +308,114 @@
     listener: function(d) {
       switch(d.command) {
         case 'snagged':
-          var val = parseInt(window.izzmo.ui.votes.find('span:last-child').html());
-          window.izzmo.ui.votes.find('span:last-child').html(++val);
-          window.izzmo.isAfk(d.senderid);
+          var val = parseInt(window.tte.ui.votes.find('span:last-child').html());
+          window.tte.ui.votes.find('span:last-child').html(++val);
+          window.tte.isAfk(d.senderid);
 
           // Update Snag count
-          window.izzmo.ui.snags += 1;
-          window.izzmo.ui.updateVoteDisplays(window.izzmo.ui.upvotes,window.izzmo.ui.downvotes,window.izzmo.ui.snags,-1);
+          window.tte.ui.snags += 1;
+          window.tte.ui.updateVoteDisplays(window.tte.ui.upvotes,window.tte.ui.downvotes,window.tte.ui.snags,-1);
           break;
           
         case 'update_votes':
-          $(window.izzmo.ui.votes.find('span')[1]).html(d.room.metadata.upvotes);
-          $(window.izzmo.ui.votes.find('span')[0]).html(d.room.metadata.downvotes);
+          $(window.tte.ui.votes.find('span')[1]).html(d.room.metadata.upvotes);
+          $(window.tte.ui.votes.find('span')[0]).html(d.room.metadata.downvotes);
           
           // Get upvotes count
-          window.izzmo.ui.upvotes = d.room.metadata.upvotes;
+          window.tte.ui.upvotes = d.room.metadata.upvotes;
 
           var $user = $('#' + d.room.metadata.votelog[0][0]);
           if(!$user.length)
             $user = guestListAddUser(d.room.metadata.votelog[0][0]);
           if(d.room.metadata.votelog[0][1] == "up") {
             $user.addClass('voteup').removeClass('votedown');
-            var pos = $.inArray(d.room.metadata.votelog[0][0], window.izzmo.downvoters)
+            var pos = $.inArray(d.room.metadata.votelog[0][0], window.tte.downvoters)
             if(pos >= 0)
-              delete window.izzmo.downvoters[pos];
+              delete window.tte.downvoters[pos];
 
             // Reconcile downvotes
-            window.izzmo.ui.downvotes = d.room.metadata.downvotes;
+            window.tte.ui.downvotes = d.room.metadata.downvotes;
           }
           else {
             $user.addClass('votedown').removeClass('voteup');
-            if($.inArray(d.room.metadata.votelog[0][0], window.izzmo.downvoters) == -1)
-              window.izzmo.downvoters.push(d.room.metadata.votelog[0][0]);
+            if($.inArray(d.room.metadata.votelog[0][0], window.tte.downvoters) == -1)
+              window.tte.downvoters.push(d.room.metadata.votelog[0][0]);
 
             // Update downvote tally
-            window.izzmo.ui.downvotes += 1;
+            window.tte.ui.downvotes += 1;
           }
-          window.izzmo.isAfk(d.room.metadata.votelog[0][0]);
+          window.tte.isAfk(d.room.metadata.votelog[0][0]);
           break;
           
         case 'newsong':
-          $(window.izzmo.ui.votes.find('span')[0]).html(0);
-          $(window.izzmo.ui.votes.find('span')[1]).html(0);
-          window.izzmo.ui.votes.find('span:last-child').html(0);
-          window.izzmo.downvoters = [];
-          window.izzmo.ui.guestList();
-          window.izzmo.ui.updateSongCount();
+          $(window.tte.ui.votes.find('span')[0]).html(0);
+          $(window.tte.ui.votes.find('span')[1]).html(0);
+          window.tte.ui.votes.find('span:last-child').html(0);
+          window.tte.downvoters = [];
+          window.tte.ui.guestList();
+          window.tte.ui.updateSongCount();
 
           // Reset Vote Counts
-          window.izzmo.ui.upvotes = 0;
-          window.izzmo.ui.downvotes = 0;
-          window.izzmo.ui.snags = 0;
+          window.tte.ui.upvotes = 0;
+          window.tte.ui.downvotes = 0;
+          window.tte.ui.snags = 0;
 
           break;
           
         case 'registered':
-          window.izzmo.ui.guestListAddUser(d.user[0]);
-          $("span#totalUsers").text(window.izzmo.ui.numUsers());
-          window.izzmo.timers.push({userid: d.user[0].userid, time: new Date().getTime()});
+          window.tte.ui.guestListAddUser(d.user[0]);
+          $("span#totalUsers").text(window.tte.ui.numUsers());
+          window.tte.timers.push({userid: d.user[0].userid, time: new Date().getTime()});
           break;
           
         case 'deregistered':
-          window.izzmo.ui.guestListRemoveUser(d.user[0].userid);
-          $("span#totalUsers").text(window.izzmo.ui.numUsers());
-          for(var prop in window.izzmo.timers) {
-            if(window.izzmo.timers[prop].userid == d.user[0].userid) {
-              delete window.izzmo.timers[prop];
+          window.tte.ui.guestListRemoveUser(d.user[0].userid);
+          $("span#totalUsers").text(window.tte.ui.numUsers());
+          for(var prop in window.tte.timers) {
+            if(window.tte.timers[prop].userid == d.user[0].userid) {
+              delete window.tte.timers[prop];
               break;
             }
           }
           break;
           
         case 'pmmed':
-          window.izzmo.ui.sendNotification('PM Notification', turntable.buddyList.pmWindows[d.senderid].otherUserName + ': ' + d.text);
-          window.izzmo.isAfk(d.senderid);
+          window.tte.ui.sendNotification('PM Notification', turntable.buddyList.pmWindows[d.senderid].otherUserName + ': ' + d.text);
+          window.tte.isAfk(d.senderid);
           break;
           
         case 'speak':
-          var list = izzmo.ttObj.users[izzmo.ttObj.selfId].name;
-          $.each(window.izzmo.ui.settings.notifierKeywords, function(i, v) {
+          var list = window.tte.ttObj.users[window.tte.ttObj.selfId].name;
+          $.each(window.tte.ui.settings.notifierKeywords, function(i, v) {
             if(v != undefined && v.length > 0)
               list += '|' + v;
           });
           if(d.text.search(new RegExp(list, 'i')) >= 0) {
-            window.izzmo.ui.sendNotification('Chat Notification', d.name + ': ' + d.text);
+            window.tte.ui.sendNotification('Chat Notification', d.name + ': ' + d.text);
           }
-          if(window.izzmo.settings.boot_linkers && d.text.search(/https?:\/\/(www.)?(((tt|turntable)\.fm)|(plug\.dj))(\/[a-zA-Z0-9\-\_]*)*\/?/ig) >= 0 && window.izzmo.ttObj.isMod() && !window.izzmo.ttObj.isMod(d.userid)) {
-            window.izzmo.socket({
+          if(window.tte.settings.boot_linkers && d.text.search(/https?:\/\/(www.)?(((tt|turntable)\.fm)|(plug\.dj))(\/[a-zA-Z0-9\-\_]*)*\/?/ig) >= 0 && window.tte.ttObj.isMod() && !window.tte.ttObj.isMod(d.userid)) {
+            window.tte.socket({
               api: 'room.boot_user',
               roomid: TURNTABLE_ROOMID,
               target_userid: d.userid,
               reason: 'Please do not link to other turntable rooms.'
             });
           }
-          window.izzmo.isAfk(d.userid);
+          window.tte.isAfk(d.userid);
           break;
           
         case 'rem_dj':
-          window.izzmo.ui.guestListAddUser(d.user[0]);
+          window.tte.ui.guestListAddUser(d.user[0]);
           break;
           
         case 'add_dj':
-          window.izzmo.ui.guestListAddUser(d.user[0]);
-          if(window.izzmo.ttObj.isMod() && window.izzmo.spotSaving.spot_saving) {
+          window.tte.ui.guestListAddUser(d.user[0]);
+          if(window.tte.ttObj.isMod() && window.tte.spotSaving.spot_saving) {
             var allOnDeck = 0;
-            var total = window.izzmo.spotSaving.spot_users.length;
-            $.each(window.izzmo.spotSaving.spot_users, function(i, v) {
+            var total = window.tte.spotSaving.spot_users.length;
+            $.each(window.tte.spotSaving.spot_users, function(i, v) {
               var uid = '';
-              $.each(window.izzmo.ttObj.users, function(i2, v2) {
+              $.each(window.tte.ttObj.users, function(i2, v2) {
                 if(v2.name.toLowerCase() == v)
                   uid = v2.userid;
               });
@@ -423,37 +423,37 @@
               if(uid == '')
                 total--; //person not in the room, so don't take him into account'
               else {
-                if($.inArray(uid, window.izzmo.ttObj.djIds) >= 0) {
+                if($.inArray(uid, window.tte.ttObj.djIds) >= 0) {
                   allOnDeck++;
                 };
               }
             });
             if(allOnDeck == total)
-              window.izzmo.spotSaving.spot_saving = false;
+              window.tte.spotSaving.spot_saving = false;
             else {
-              if($.inArray(d.user[0].name.toLowerCase(), window.izzmo.spotSaving.spot_users) < 0) {
-                if(!window.izzmo.ttObj.isMod(d.user[0].userid) && allOnDeck != total) {
-                  window.izzmo.spotSaving.spot_attempts.push(d.user[0].userid);
+              if($.inArray(d.user[0].name.toLowerCase(), window.tte.spotSaving.spot_users) < 0) {
+                if(!window.tte.ttObj.isMod(d.user[0].userid) && allOnDeck != total) {
+                  window.tte.spotSaving.spot_attempts.push(d.user[0].userid);
                   var count = 0;
-                  $.each(window.izzmo.spotSaving.spot_attempts, function(i, v) {
+                  $.each(window.tte.spotSaving.spot_attempts, function(i, v) {
                     if(v == d.user[0].userid) count++;
                   });
                   if(count > 2) { 
-                    window.izzmo.socket({
+                    window.tte.socket({
                       api: 'room.boot_user',
                       roomid: TURNTABLE_ROOMID,
                       target_userid: d.user[0].userid,
-                      reason: window.izzmo.spotSaving.boot_msg
+                      reason: window.tte.spotSaving.boot_msg
                     });
                   }
                   else {
-                    window.izzmo.callback('remove_dj', d.user[0].userid);
-                    window.izzmo.sendMsg(':exclamation:Sorry ' + d.user[0].name + ', that spot is reserved!');
+                    window.tte.callback('remove_dj', d.user[0].userid);
+                    window.tte.sendMsg(':exclamation:Sorry ' + d.user[0].name + ', that spot is reserved!');
                   }
                 }
                 else {
-                  window.izzmo.spotSaving.spot_attempts = [];
-                  window.izzmo.spotSaving.spot_saving = false;
+                  window.tte.spotSaving.spot_attempts = [];
+                  window.tte.spotSaving.spot_saving = false;
                 }
               }
             }
@@ -463,22 +463,22 @@
     },
 
     override_set_dj_points: function(points) {
-      setTimeout(function(){window.izzmo.ui.updateVoteDisplays(window.izzmo.ui.upvotes,window.izzmo.ui.downvotes,window.izzmo.ui.snags,points);},250);
+      setTimeout(function(){window.tte.ui.updateVoteDisplays(window.tte.ui.upvotes,window.tte.ui.downvotes,window.tte.ui.snags,points);},250);
     },
 
     updateVoteDisplays: function(upvotes,downvotes,snags,points) {
-      if(points < 0) {points = Number(window.izzmo.ttRoomObjs.current_dj[3].html().split(" ")[0].replace(',',''));}
+      if(points < 0) {points = Number(window.tte.ttRoomObjs.current_dj[3].html().split(" ")[0].replace(',',''));}
       var suffix = " points";
       suffix += "<br/>+" + upvotes.toString();
       suffix += " / -" + downvotes.toString();
       suffix += " / &#9829;" + snags.toString();
 
       // Dj Display
-      if(window.izzmo.ttRoomObjs.current_dj)
+      if(window.tte.ttRoomObjs.current_dj)
       {
-        window.izzmo.ttRoomObjs.current_dj[3].show();
-        window.izzmo.ttRoomObjs.current_dj[3].html(window.izzmo.ttRoomObjs.commafy(points) + suffix);
-        window.izzmo.ttRoomObjs.current_dj[4].points = points;
+        window.tte.ttRoomObjs.current_dj[3].show();
+        window.tte.ttRoomObjs.current_dj[3].html(window.tte.ttRoomObjs.commafy(points) + suffix);
+        window.tte.ttRoomObjs.current_dj[4].points = points;
       }
 
       // Song List Display
@@ -496,7 +496,7 @@
 
     numUsers: function() {
       var count = 0;
-      for(var prop in window.izzmo.ttObj.users)
+      for(var prop in window.tte.ttObj.users)
         count++;
       return count;
     },
@@ -514,38 +514,38 @@
           g = $(".guest-list-container .guests");
       
       // get each type
-      for (var f in window.izzmo.ttObj.users) {
-        if(window.izzmo.ttObj.isDj(f))
-          djs.push(window.izzmo.ttObj.users[f]);
-        else if(window.izzmo.ttObj.isSuperuser(f))
-          supers.push(window.izzmo.ttObj.users[f]);
-        else if(window.izzmo.ttObj.isMod(f))
-          mods.push(window.izzmo.ttObj.users[f]);
-        else if(window.izzmo.ttObj.users[f].fanof)
-          fans.push(window.izzmo.ttObj.users[f]);
+      for (var f in window.tte.ttObj.users) {
+        if(window.tte.ttObj.isDj(f))
+          djs.push(window.tte.ttObj.users[f]);
+        else if(window.tte.ttObj.isSuperuser(f))
+          supers.push(window.tte.ttObj.users[f]);
+        else if(window.tte.ttObj.isMod(f))
+          mods.push(window.tte.ttObj.users[f]);
+        else if(window.tte.ttObj.users[f].fanof)
+          fans.push(window.tte.ttObj.users[f]);
         else
-          users.push(window.izzmo.ttObj.users[f]);
+          users.push(window.tte.ttObj.users[f]);
       }
 
       var c = g.find(".guest.selected").data("id");
       g.find("div").remove();
 
       // sort
-      window.izzmo.ui.guestListAddUsers(g, 'super', supers.sort(window.izzmo.ui.userSort));;
-      window.izzmo.ui.guestListAddUsers(g, 'mod', mods.sort(window.izzmo.ui.userSort));
-      window.izzmo.ui.guestListAddUsers(g, 'dj', djs.sort(window.izzmo.ui.userSort));
-      window.izzmo.ui.guestListAddUsers(g, 'fan', fans.sort(window.izzmo.ui.userSort));
-      window.izzmo.ui.guestListAddUsers(g, 'user', users.sort(window.izzmo.ui.userSort));
-      //window.izzmo.ui.guestListAddUsers(g, 'user', $.merge(fans.sort(window.izzmo.ui.userSort), users.sort(window.izzmo.ui.userSort)));
+      window.tte.ui.guestListAddUsers(g, 'super', supers.sort(window.tte.ui.userSort));;
+      window.tte.ui.guestListAddUsers(g, 'mod', mods.sort(window.tte.ui.userSort));
+      window.tte.ui.guestListAddUsers(g, 'dj', djs.sort(window.tte.ui.userSort));
+      window.tte.ui.guestListAddUsers(g, 'fan', fans.sort(window.tte.ui.userSort));
+      window.tte.ui.guestListAddUsers(g, 'user', users.sort(window.tte.ui.userSort));
+      //window.tte.ui.guestListAddUsers(g, 'user', $.merge(fans.sort(window.tte.ui.userSort), users.sort(window.tte.ui.userSort)));
       
       if(fans.length > 0)
         $('#desc-user > div.desc').hide();
       
-      $.each(window.izzmo.ttObj.upvoters, function(i, v) {
+      $.each(window.tte.ttObj.upvoters, function(i, v) {
         g.find('#' + v).addClass('voteup');
       });
       
-      $("span#totalUsers").text(window.izzmo.ui.numUsers());
+      $("span#totalUsers").text(window.tte.ui.numUsers());
     },
     guestListAddUsers: function(obj, type, userList) {
       var title = '',
@@ -577,17 +577,17 @@
       groupHeader = $('<div class="desc black-right-header"' + ((type == 'super') ? ' style="display: none;"' : '') + '><div class="desc-inner header-text">' + title + '</div></div>');
       groupContainer.append(groupHeader);
       $.each(userList, function(i, v) {
-        groupContainer.append(window.izzmo.ui.guestListGetUserHtml(type, v));
+        groupContainer.append(window.tte.ui.guestListGetUserHtml(type, v));
       });
       obj.append(groupContainer);
     },
     guestListAddUser: function(user) {
       var type, $s;
-      if(window.izzmo.ttObj.isDj(user.userid))
+      if(window.tte.ttObj.isDj(user.userid))
         type = 'dj';
-      else if(window.izzmo.ttObj.isSuperuser(user.userid))
+      else if(window.tte.ttObj.isSuperuser(user.userid))
         type = 'super';
-      else if(window.izzmo.ttObj.isMod(user.userid))
+      else if(window.tte.ttObj.isMod(user.userid))
         type = 'mod';
       else if(user.fanof) {
         type = 'fan';
@@ -598,11 +598,11 @@
       $('#' + user.userid).remove();
       
       $s = $('#desc-' + type);
-      var text = window.izzmo.ui.guestListGetUserHtml(type, user),
+      var text = window.tte.ui.guestListGetUserHtml(type, user),
           found = undefined;
       $s.find('div.guest').each(function() {
         var $this = $(this);
-        if(window.izzmo.ui.userSort(user, {name: $this.find('div.guestName').html()}) <= 0) {
+        if(window.tte.ui.userSort(user, {name: $this.find('div.guestName').html()}) <= 0) {
           found = $this;
           return false;
         }
@@ -622,15 +622,15 @@
     },
     guestListGetUserHtml: function(type, user) {
       var icons = '';
-      if(window.izzmo.ttObj.isSuperuser(user.userid))
+      if(window.tte.ttObj.isSuperuser(user.userid))
         icons += '<img src="http://static.turntable.fm.s3.amazonaws.com/images/room/superuser_icon.png" alt="Super User" />';
-      else if(window.izzmo.ttObj.isMod(user.userid))
+      else if(window.tte.ttObj.isMod(user.userid))
         icons += '<img src="http://static.turntable.fm.s3.amazonaws.com/images/room/mod_icon.png" alt="Moderator" />';
       
       var vote = '';
-      if($.inArray(user.userid, window.izzmo.downvoters) >= 0)
+      if($.inArray(user.userid, window.tte.downvoters) >= 0)
         vote = 'votedown';
-      else if($.inArray(user.userid, window.izzmo.ttObj.upvoters) >= 0)
+      else if($.inArray(user.userid, window.tte.ttObj.upvoters) >= 0)
         vote = 'voteup';
       
       return  $('<div class="guest ' + type + ' ' + vote + ' ' + ((user.fanof && type == user) ? 'fan' : '') + '" id="' + user.userid + '">'
@@ -641,13 +641,13 @@
             + '</div>')
             .bind('click', function() {
               var $this = $(this),
-                  l = Room.layouts.guestOptions(window.izzmo.ttObj.users[$this.attr('id')], window.izzmo.ttObj);
+                  l = Room.layouts.guestOptions(window.tte.ttObj.users[$this.attr('id')], window.tte.ttObj);
               delete l[3];
               l[2].push([
                 'a.guestOption',
                 {
                   event: { click: function() {
-                    window.izzmo.eventManager.queue({ api: 'getNote', userid: $this.attr('id') }, function(response) {
+                    window.tte.eventManager.queue({ api: 'getNote', userid: $this.attr('id') }, function(response) {
                       var $html = $(util.buildTree(
                         ["div.modal", {},
                           ["div.close-x", {event: { click: util.hideOverlay } }],
@@ -659,7 +659,7 @@
                           ["br"], ["br"],
                           ["div.ok-button.centered-button", { event: { click: function() {
                                   var val = $('#userNoteField').val(), uid = $this.attr('id');
-                                  window.izzmo.eventManager.queue({ api: 'setNote', userid: uid, note: val });
+                                  window.tte.eventManager.queue({ api: 'setNote', userid: uid, note: val });
                                   util.hideOverlay();
                                 }
                               }
@@ -685,17 +685,17 @@
             })
             .bind('mouseenter', function() {
               $this = $(this);
-              $this.find('div.idletime').html(window.izzmo.getAfkTime($this.attr('id'))).show();
+              $this.find('div.idletime').html(window.tte.getAfkTime($this.attr('id'))).show();
               $this.find('div.icons').hide();
-              clearInterval(window.izzmo.timerHover);
-              window.izzmo.timerHover = setInterval(function() {
-                $this.find('div.idletime').html(window.izzmo.getAfkTime($this.attr('id')));
+              clearInterval(window.tte.timerHover);
+              window.tte.timerHover = setInterval(function() {
+                $this.find('div.idletime').html(window.tte.getAfkTime($this.attr('id')));
               }, 1000);
             })
             .bind('mouseleave', function() {
               $(this).find('div.idletime').hide();
               $(this).find('div.icons').show();
-              clearInterval(window.izzmo.timerHover);
+              clearInterval(window.tte.timerHover);
             });
     },
     appendChatMessage: function (f, a, h, j) {
@@ -704,15 +704,15 @@
       var b = util.buildTree(Room.layouts.chatMessage);
       var i = this;
       $(b).find(".speaker").text(a).click(function (e) {
-        if(window.izzmo.ui.settings.showChatAvatarTooltip)
-          window.izzmo.ttRoomObjs.toggle_listener(f);
-        var l = Room.layouts.guestOptions(window.izzmo.ttObj.users[f], window.izzmo.ttObj);
+        if(window.tte.ui.settings.showChatAvatarTooltip)
+          window.tte.ttRoomObjs.toggle_listener(f);
+        var l = Room.layouts.guestOptions(window.tte.ttObj.users[f], window.tte.ttObj);
         delete l[3];
         l[2].splice(4, 0, [
           'a.guestOption',
           {
             event: { click: function() {
-              window.izzmo.eventManager.queue({ api: 'getNote', userid: f }, function(response) {
+              window.tte.eventManager.queue({ api: 'getNote', userid: f }, function(response) {
                 var $html = $(util.buildTree(
                   ["div.modal", {},
                     ["div.close-x", {event: { click: util.hideOverlay } }],
@@ -724,7 +724,7 @@
                     ["br"], ["br"],
                     ["div.ok-button.centered-button", { event: { click: function() {
                             var val = $('#userNoteField').val();
-                            window.izzmo.eventManager.queue({ api: 'setNote', userid: f, note: val });
+                            window.tte.eventManager.queue({ api: 'setNote', userid: f, note: val });
                             util.hideOverlay();
                           }
                         }
@@ -749,9 +749,9 @@
         $('body').append(c);
       });
       
-      var list = window.izzmo.ttObj.users[window.izzmo.ttObj.selfId].name,
+      var list = window.tte.ttObj.users[window.tte.ttObj.selfId].name,
           c = $(b).find(".text");
-      $.each(window.izzmo.ui.settings.notifierKeywords, function(i, v) {
+      $.each(window.tte.ui.settings.notifierKeywords, function(i, v) {
         if(v != undefined && v.length > 0)
           list += '|' + v;
       });
@@ -784,7 +784,7 @@
       return count;
     },
     sendNotification: function(title, text) {
-      if(window.izzmo.ui.settings.notifications != 0 && $('html').hasClass('blur') && window.webkitNotifications.checkPermission() == 0) {
+      if(window.tte.ui.settings.notifications != 0 && $('html').hasClass('blur') && window.webkitNotifications.checkPermission() == 0) {
         var n = window.webkitNotifications.createNotification('', title, text);
         n.ondisplay = function() { setTimeout(function() {n.cancel()}, 10000); };
         //n.onclose = function() {  };
@@ -792,38 +792,38 @@
       }
     },
     toggleAnimations: function() {
-      if(window.izzmo.ui.settings.animations) {
-        window.izzmo.ui.settings.animations = false;
-        window.izzmo.eventManager.queue({api: 'settings', code: 'set', settings: {animations: false}});
-        window.izzmo.ui.setAnimations(false);
+      if(window.tte.ui.settings.animations) {
+        window.tte.ui.settings.animations = false;
+        window.tte.eventManager.queue({api: 'settings', code: 'set', settings: {animations: false}});
+        window.tte.ui.setAnimations(false);
       }
       else {
-        window.izzmo.ui.settings.animations = true;
-        window.izzmo.eventManager.queue({api: 'settings', code: 'set', settings: {animations: true}});
-        window.izzmo.ui.setAnimations(true);
+        window.tte.ui.settings.animations = true;
+        window.tte.eventManager.queue({api: 'settings', code: 'set', settings: {animations: true}});
+        window.tte.ui.setAnimations(true);
       }
     },
     setAnimations: function(on) {
       if(on) {
         $('#izzmo-settings-menu-animations-icon').parent().find('div').first().css({backgroundImage: 'url(http://www.pinnacleofdestruction.net/tt/images/check.png)'});
-        window.izzmo.ttRoomObjs.add_listener = window.izzmo.ttRoomObjs.__add_listener;
-        delete window.izzmo.ttRoomObjs.__add_listener;
-        for(var user in window.izzmo.ttObj.users)
-          window.izzmo.ttObj.refreshRoomUser(window.izzmo.ttObj.users[user]);
+        window.tte.ttRoomObjs.add_listener = window.tte.ttRoomObjs.__add_listener;
+        delete window.tte.ttRoomObjs.__add_listener;
+        for(var user in window.tte.ttObj.users)
+          window.tte.ttObj.refreshRoomUser(window.tte.ttObj.users[user]);
       }
       else {
         $('#izzmo-settings-menu-animations-icon').parent().find('div').first().css({backgroundImage: 'url(http://www.pinnacleofdestruction.net/tt/images/cross.png)'});
-        for(var listener in window.izzmo.ttRoomObjs.listeners)
-          window.izzmo.ttRoomObjs.rem_listener({userid: listener});
-        window.izzmo.ttRoomObjs.__add_listener = window.izzmo.ttRoomObjs.add_listener;
-        window.izzmo.ttRoomObjs.add_listener = function() {return;}
+        for(var listener in window.tte.ttRoomObjs.listeners)
+          window.tte.ttRoomObjs.rem_listener({userid: listener});
+        window.tte.ttRoomObjs.__add_listener = window.tte.ttRoomObjs.add_listener;
+        window.tte.ttRoomObjs.add_listener = function() {return;}
       }
     },
     buddyListBuddy: function(d, g, f) {
       var b = ("roomName" in d && !f) ? ["div.room", { }, d.roomName] : "";
       var a = function() {
         d.fanof = true;
-        var l = Room.layouts.guestOptions(d, window.izzmo.ttObj);
+        var l = Room.layouts.guestOptions(d, window.tte.ttObj);
         delete l[3]; // delete arrow
         l[2].splice(2, 0, l[2].pop());
         var callback = l[2][2][1].event.click.prototype.constructor;
@@ -848,7 +848,7 @@
           'a.guestOption',
           {
             event: { click: function() {
-              window.izzmo.eventManager.queue({ api: 'getNote', userid: d.userid }, function(response) {
+              window.tte.eventManager.queue({ api: 'getNote', userid: d.userid }, function(response) {
                 var $html = $(util.buildTree(
                   ["div.modal", {},
                     ["div.close-x", {event: { click: util.hideOverlay } }],
@@ -860,7 +860,7 @@
                     ["br"], ["br"],
                     ["div.ok-button.centered-button", { event: { click: function() {
                             var val = $('#userNoteField').val();
-                            window.izzmo.eventManager.queue({ api: 'setNote', userid: d.userid, note: val });
+                            window.tte.eventManager.queue({ api: 'setNote', userid: d.userid, note: val });
                             util.hideOverlay();
                           }
                         }
@@ -879,11 +879,11 @@
         ]);
         
         // add favorite item
-        if($.inArray(d.userid, window.izzmo.ui.settings.favorites) >= 0) {
+        if($.inArray(d.userid, window.tte.ui.settings.favorites) >= 0) {
           l[2].splice(4, 0, ["a#" + d.userid + ".guestOption", {event: {'click': function() {
             var userid = $(this).attr('id');
-            window.izzmo.eventManager.queue({api: 'favorite.remove', 'userid': userid});
-            window.izzmo.ui.settings.favorites.splice($.inArray(userid, window.izzmo.ui.settings.favorites), 1);
+            window.tte.eventManager.queue({api: 'favorite.remove', 'userid': userid});
+            window.tte.ui.settings.favorites.splice($.inArray(userid, window.tte.ui.settings.favorites), 1);
             $('div.guestOptionsContainer').remove();
             $('#buddyList #bl' + $(this).attr('id')).removeClass('favorite');
             window.turntable.fetchBuddyPresence();
@@ -892,8 +892,8 @@
         else {
           l[2].splice(4, 0, ["a#" + d.userid + ".guestOption", {event: {'click': function() {
             var userid = $(this).attr('id');
-            window.izzmo.eventManager.queue({api: 'favorite.add', 'userid': userid});
-            window.izzmo.ui.settings.favorites.push(userid);
+            window.tte.eventManager.queue({api: 'favorite.add', 'userid': userid});
+            window.tte.ui.settings.favorites.push(userid);
             $('div.guestOptionsContainer').remove();
             $('#buddyList #bl' + $(this).attr('id')).addClass('favorite').find('div.name').append(' \u2605').end().prependTo($('#buddyList'));
           }}, href: '#'}, "Favorite User"]);          
@@ -935,7 +935,7 @@
           src: c,
           height: "20"
         }]],
-        ["div.user", { }, ["div.name", { }, (($.inArray(d.userid, window.izzmo.ui.settings.favorites) >= 0) ? (d.name + ' \u2605') : d.name)],b],
+        ["div.user", { }, ["div.name", { }, (($.inArray(d.userid, window.tte.ui.settings.favorites) >= 0) ? (d.name + ' \u2605') : d.name)],b],
         ["div##status" + d.userid + ".status." + d.status]
       ];
     },
@@ -955,7 +955,7 @@
           $topPanel.find('div.share-on').hide();
           if(change) {
             // rebind scroll events
-            $(".chatHeader").mousedown(window.izzmo.ttObj.chatResizeStart);
+            $(".chatHeader").mousedown(window.tte.ttObj.chatResizeStart);
             
             // move chat window back inside right-panel container
             var $chatContainer = $roomView.find('div.chat-container').css({top: '258px', left: '', 'height': '345px'});
@@ -980,7 +980,7 @@
         case 0:
           // 3 Column
           if(change)
-            window.izzmo.ui.setDisplay(-1, true);
+            window.tte.ui.setDisplay(-1, true);
           
           // unbind default events
           $(".chatHeader").unbind('mousedown');
@@ -998,8 +998,8 @@
           $view.find('div.songlist').height(height-25-68-36);
           if(!$('#totalSongs').length) {
             $playlist.append('<div class="chatBar"><div class="guestListSize"><span id="totalSongs">0</span> songs in your queue.</div></div>');
-            if(window.izzmo.ui.updateSongCount() == 0)
-              setTimeout(function() { window.izzmo.ui.updateSongCount(); }, 10000);
+            if(window.tte.ui.updateSongCount() == 0)
+              setTimeout(function() { window.tte.ui.updateSongCount(); }, 10000);
           }
 
           // update user list
@@ -1012,7 +1012,7 @@
           // Queue & Guest list stacked
           
           if(change)
-            window.izzmo.ui.setDisplay(-1, true);
+            window.tte.ui.setDisplay(-1, true);
           
           // unbind default events
           $(".chatHeader").unbind('mousedown');
@@ -1030,8 +1030,8 @@
           $view.find('div.songlist').height(301-25-68-36);
           if(!$('#totalSongs').length) {
             $playlist.append('<div class="chatBar"><div class="guestListSize"><span id="totalSongs">0</span> songs in your queue.</div></div>');
-            if(window.izzmo.ui.updateSongCount() == 0)
-              setTimeout(function() { window.izzmo.ui.updateSongCount(); }, 10000);
+            if(window.tte.ui.updateSongCount() == 0)
+              setTimeout(function() { window.tte.ui.updateSongCount(); }, 10000);
           }
 
           // update user list
@@ -1043,7 +1043,7 @@
           // Queue & Chat Stacked
           
           if(change)
-            window.izzmo.ui.setDisplay(-1, true);
+            window.tte.ui.setDisplay(-1, true);
           
           // unbind default events
           $(".chatHeader").unbind('mousedown');
@@ -1060,8 +1060,8 @@
           $view.find('div.songlist').height(301-25-68-36);
           if(!$('#totalSongs').length) {
             $playlist.append('<div class="chatBar"><div class="guestListSize"><span id="totalSongs">0</span> songs in your queue.</div></div>');
-            if(window.izzmo.ui.updateSongCount() == 0)
-              setTimeout(function() { window.izzmo.ui.updateSongCount(); }, 10000);
+            if(window.tte.ui.updateSongCount() == 0)
+              setTimeout(function() { window.tte.ui.updateSongCount(); }, 10000);
           }
 
           // update user list
@@ -1075,34 +1075,34 @@
     }
   };
   
-  izzmo.ui.init = function() {
+  window.tte.ui.init = function() {
     for(var prop in window.turntable) {
       if(window.turntable[prop] != undefined && window.turntable[prop].hasOwnProperty('currentDj'))
-        window.izzmo.ttObj = window.turntable[prop];
+        window.tte.ttObj = window.turntable[prop];
     }
-    for(var prop in window.izzmo.ttObj) {
+    for(var prop in window.tte.ttObj) {
       if(prop.indexOf('Callback') >= 0 && prop != 'sampleCallback') {
-        window.izzmo.callback = window.izzmo.ttObj[prop];
+        window.tte.callback = window.tte.ttObj[prop];
         break;
       }
     }
-    for(var prop in window.izzmo.ttObj) {
-      if(window.izzmo.ttObj[prop] != undefined && window.izzmo.ttObj[prop].hasOwnProperty('div'))
-        window.izzmo.ttRoomObjs = window.izzmo.ttObj[prop];
+    for(var prop in window.tte.ttObj) {
+      if(window.tte.ttObj[prop] != undefined && window.tte.ttObj[prop].hasOwnProperty('div'))
+        window.tte.ttRoomObjs = window.tte.ttObj[prop];
     }
     
-    if(window.izzmo.ttObj === null) {
-      if(window.izzmo.attempts < 20) {
-        window.izzmo.attempts++;
-        return setTimeout(function() { window.izzmo.ui.init() }, 1000);
+    if(window.tte.ttObj === null) {
+      if(window.tte.attempts < 20) {
+        window.tte.attempts++;
+        return setTimeout(function() { window.tte.ui.init() }, 1000);
       }
       else
         return alert('Could not find turntable.fm objects. You should refresh your page and try again.');
     }
-    window.izzmo.attempts = 0;
-    window.izzmo.init();
+    window.tte.attempts = 0;
+    window.tte.init();
 
-    window.izzmo.socket = function (c, a) {
+    window.tte.socket = function (c, a) {
         if (c.api == "room.now") {
             return;
         }
@@ -1150,33 +1150,33 @@
     $('.playlist-container:first div.header-text:first').html('Turntable Enhanced');
     
     // rewrite guest list update function
-    window.izzmo.ttObj.__updateGuestList = window.izzmo.ttObj.updateGuestList;
-    window.izzmo.ttObj.updateGuestList = function() {return;};
-    window.izzmo.ui.guestList();
+    window.tte.ttObj.__updateGuestList = window.tte.ttObj.updateGuestList;
+    window.tte.ttObj.updateGuestList = function() {return;};
+    window.tte.ui.guestList();
     
     // add votes to top bar
     $('#top-panel div.votes').first().remove();
-    window.izzmo.ui.votes = $('<div class="votes"><img src="http://www.pinnacleofdestruction.net/tt/images/arrow_down_red.png" alt="Lames" /> <span>0</span> <img src="http://www.pinnacleofdestruction.net/tt/images/arrow_up_green.png" alt="Awesomes" /> <span>' + window.izzmo.ttObj.upvoters.length + '</span> <img src="http://www.pinnacleofdestruction.net/tt/images/heart_votes.png" alt="Song Snags" /> <span>0</span></div>');
-    $topPanel.find('div.info').append(window.izzmo.ui.votes);
-    if(window.izzmo.ttObj.upvoters.length == 0) {
+    window.tte.ui.votes = $('<div class="votes"><img src="http://www.pinnacleofdestruction.net/tt/images/arrow_down_red.png" alt="Lames" /> <span>0</span> <img src="http://www.pinnacleofdestruction.net/tt/images/arrow_up_green.png" alt="Awesomes" /> <span>' + window.tte.ttObj.upvoters.length + '</span> <img src="http://www.pinnacleofdestruction.net/tt/images/heart_votes.png" alt="Song Snags" /> <span>0</span></div>');
+    $topPanel.find('div.info').append(window.tte.ui.votes);
+    if(window.tte.ttObj.upvoters.length == 0) {
       setTimeout(function() {
-        $(window.izzmo.ui.votes.find('span')[1]).html(window.izzmo.ttObj.upvoters.length);
-        window.izzmo.ui.guestList();
+        $(window.tte.ui.votes.find('span')[1]).html(window.tte.ttObj.upvoters.length);
+        window.tte.ui.guestList();
       }, 2000);
     }
 
     // override set_dj_points
-    window.izzmo.ttRoomObjs.set_dj_points = window.izzmo.ui.override_set_dj_points;
+    window.tte.ttRoomObjs.set_dj_points = window.tte.ui.override_set_dj_points;
     
-    turntable.addEventListener("message", window.izzmo.ui.listener);
+    turntable.addEventListener("message", window.tte.ui.listener);
     
     // setup AFK Timers
-    for(var prop in window.izzmo.ttObj.users) {
-      window.izzmo.isAfk(prop);
+    for(var prop in window.tte.ttObj.users) {
+      window.tte.isAfk(prop);
     }
     
     // update append Chat message function
-    window.izzmo.ttObj.appendChatMessage = window.izzmo.ui.appendChatMessage;
+    window.tte.ttObj.appendChatMessage = window.tte.ui.appendChatMessage;
     
     // add animations button to menu
     $('#izzmo-settings-menu-animations-icon').parent().remove();
@@ -1184,12 +1184,12 @@
     $('#izzmo-settings-menu-animations-icon')
     .parent()
     .bind('click', function() {
-      window.izzmo.ui.toggleAnimations(this);
+      window.tte.ui.toggleAnimations(this);
     });
     
     // add moderation button to menu
     $('#izzmo-settings-menu-moderation').remove();
-    if(window.izzmo.ttObj.isMod()) {
+    if(window.tte.ttObj.isMod()) {
       $('#menuh').find('div.menuItem').last().before('<div id="izzmo-settings-menu-moderation" class="menuItem">Room Moderation</div>');
       $('#izzmo-settings-menu-moderation').bind('click', function() {
         var settings = $(util.buildTree(
@@ -1200,9 +1200,9 @@
           ["div.spots", {} ],
           ["div.save-changes.centered-button", { event: {
             click: function() {
-              window.izzmo.spotSaving.spot_saving = ($('#izzui-settings input.spot_saving')[0].checked);
-              window.izzmo.spotSaving.boot_msg = $('#izzui-settings #boot_msg').val();
-              window.izzmo.settings.boot_linkers = ($('#izzui-settings input.links_enabled')[0].checked);
+              window.tte.spotSaving.spot_saving = ($('#izzui-settings input.spot_saving')[0].checked);
+              window.tte.spotSaving.boot_msg = $('#izzui-settings #boot_msg').val();
+              window.tte.settings.boot_linkers = ($('#izzui-settings input.links_enabled')[0].checked);
               util.hideOverlay();
             }
           } }],
@@ -1210,46 +1210,46 @@
         ]
       ));
 
-      settings.find('div.spots').first().append('<div><span>Boot Room Linkers?</span><div style="text-align: right; padding-right: 100px;"><input type="checkbox" class="links_enabled" value="1"' + ((window.izzmo.settings.boot_linkers) ? 'checked' : '') + '></div></div>');
+      settings.find('div.spots').first().append('<div><span>Boot Room Linkers?</span><div style="text-align: right; padding-right: 100px;"><input type="checkbox" class="links_enabled" value="1"' + ((window.tte.settings.boot_linkers) ? 'checked' : '') + '></div></div>');
       settings.find('div.spots').first().append('<p>If enabled, will automatically boot non-mods from the room for linking to other Turntable.fm rooms.</p>');
-      settings.find('div.spots').first().append('<div><span>Save Spots?</span><div style="text-align: right; padding-right: 100px;"><input type="checkbox" class="spot_saving" value="1"' + ((window.izzmo.spotSaving.spot_saving) ? 'checked' : '') + '></div></div>');
+      settings.find('div.spots').first().append('<div><span>Save Spots?</span><div style="text-align: right; padding-right: 100px;"><input type="checkbox" class="spot_saving" value="1"' + ((window.tte.spotSaving.spot_saving) ? 'checked' : '') + '></div></div>');
       settings.find('div.spots').first().append('<p>Spot saving allows you to moderate who gets up on stage. If enabled, any of the usernames you list below will be allowed on deck, and anyone else who tries to get up will be automatically booted off stage.</p><p>If spot saving and AutoDJ are on, you will not get up on deck unless you add yourself to the list.</p>');
       settings.find('div.spots').first().append('<div><span>Username:</span><input type="text" id="user" size="26" style="font-size: 18px;" /><br /><p>Press the \'enter\' key after you have entered the person\'s name to add them to the list.</p></div>');
       settings.find('div.spots').first().append('<div style="padding: 5px; font-size: 15px; text-align: left;"><span style="float: none;">Allowed DJ\'s:</span><ul id="djs"></ul></div>');
       settings.find('div.spots').first().append('<div><span>Boot Message:</span></div>');
-      settings.find('div.spots').first().append('<div><textarea id="boot_msg" cols="30" rows="3" style="font-size: 18px;">' + window.izzmo.spotSaving.boot_msg + '</textarea></div>');
+      settings.find('div.spots').first().append('<div><textarea id="boot_msg" cols="30" rows="3" style="font-size: 18px;">' + window.tte.spotSaving.boot_msg + '</textarea></div>');
       
       var users = [];
-      $.each(window.izzmo.ttObj.users, function(i, v) {
+      $.each(window.tte.ttObj.users, function(i, v) {
         users.push(v.name);
       });
       settings.find('input#user').autocomplete({
         source: users
       })
       .bind('keypress', function(e) {
-        if(e.keyCode == 13 && $.inArray(this.value, window.izzmo.spotSaving.spot_users) < 0) {
+        if(e.keyCode == 13 && $.inArray(this.value, window.tte.spotSaving.spot_users) < 0) {
           var html = $('<li><span id="name">' + this.value.toLowerCase() + '</span> <a href="#" title="Remove Person"><img src="http://www.pinnacleofdestruction.net/tt/images/x.gif" alt="Remove Person" /></a></li>');
           html.find('a').bind('click', function(e) {
             e.preventDefault();
             var container = $(this).parent();
-            delete window.izzmo.spotSaving.spot_users[$.inArray(container.find('span#name').html(), window.izzmo.spotSaving.spot_users)];
+            delete window.tte.spotSaving.spot_users[$.inArray(container.find('span#name').html(), window.tte.spotSaving.spot_users)];
             container.remove();
           });
-          window.izzmo.spotSaving.spot_users.push(this.value.toLowerCase());
+          window.tte.spotSaving.spot_users.push(this.value.toLowerCase());
           settings.find('ul#djs').append(html);
           this.value = "";
         }
       });
-      $.each(window.izzmo.spotSaving.spot_users, function(i, v) {
+      $.each(window.tte.spotSaving.spot_users, function(i, v) {
         if(v == undefined) {
-          delete window.izzmo.spotSaving.spot_users[i];
+          delete window.tte.spotSaving.spot_users[i];
           return;
         }
         var html = $('<li><span id="name">' + v.toLowerCase() + '</span> <a href="#" title="Remove Person"><img src="http://www.pinnacleofdestruction.net/tt/images/x.gif" alt="Remove Person" /></a></li>');
           html.find('a').bind('click', function(e) {
             e.preventDefault();
             var container = $(this).parent();
-            delete window.izzmo.spotSaving.spot_users[$.inArray(container.find('span#name').html(), window.izzmo.spotSaving.spot_users)];
+            delete window.tte.spotSaving.spot_users[$.inArray(container.find('span#name').html(), window.tte.spotSaving.spot_users)];
             container.remove();
           });
           settings.find('ul#djs').append(html);
@@ -1261,7 +1261,7 @@
     }
     
     // setup buddy list enhancements
-    window.BuddyListPM.layouts.buddyListBuddy = window.izzmo.ui.buddyListBuddy;
+    window.BuddyListPM.layouts.buddyListBuddy = window.tte.ui.buddyListBuddy;
     //window.turntable.buddyList._updateBuddies = window.turntable.buddyList.updateBuddies;
     window.turntable.buddyList.updateBuddies = function(f) {
       if (f.success == true) {
@@ -1278,7 +1278,7 @@
                 b.roomName = c[0].name;
                 b.roomShortcut = c[0].shortcut;
                 b.roomId = c[0].roomid;
-                ($.inArray(b.userid, window.izzmo.ui.settings.favorites) >= 0) ? favs.push(b) : a.push(b);
+                ($.inArray(b.userid, window.tte.ui.settings.favorites) >= 0) ? favs.push(b) : a.push(b);
                 e[b.userid] = b;
               }
             }
@@ -1328,53 +1328,53 @@
                   return false;
                 }
               });
-              window.izzmo.ui.settings.notifications = ($('#izzui-settings input.notifications')[1].checked);
-              window.izzmo.ui.settings.showChatAvatarTooltip = ($('#izzui-settings input.avatar_tooltip')[1].checked);
+              window.tte.ui.settings.notifications = ($('#izzui-settings input.notifications')[1].checked);
+              window.tte.ui.settings.showChatAvatarTooltip = ($('#izzui-settings input.avatar_tooltip')[1].checked);
 
-              if(type != window.izzmo.ui.settings.displayType)
-                window.izzmo.ui.setDisplay(type, true);
-              window.izzmo.ui.settings.displayType = type;
+              if(type != window.tte.ui.settings.displayType)
+                window.tte.ui.setDisplay(type, true);
+              window.tte.ui.settings.displayType = type;
               
-              window.izzmo.eventManager.queue({api: 'settings', code: 'set', settings: window.izzmo.ui.settings});
+              window.tte.eventManager.queue({api: 'settings', code: 'set', settings: window.tte.ui.settings});
               util.hideOverlay();
             }
           } }],
           ["br"]
         ]
       ));
-      settings.find('div.fields').first().append('<div><span>Desktop Notifications</span><div><input type="radio" name="notifications" class="notifications" value="0" ' + ((window.izzmo.ui.settings.notifications) ? '' : 'checked') + '> No <input type="radio" name="notifications" class="notifications" value="1"' + ((window.izzmo.ui.settings.notifications) ? 'checked' : '') + '> Yes</div></div>');
-      settings.find('div.fields').first().append('<div><span>Avatar Tooltip</span><div><input type="radio" name="avatar_tooltip" class="avatar_tooltip" value="0" ' + ((window.izzmo.ui.settings.showChatAvatarTooltip) ? '' : 'checked') + '> No <input type="radio" name="avatar_tooltip" class="avatar_tooltip" value="1" ' + ((window.izzmo.ui.settings.showChatAvatarTooltip) ? 'checked' : '') + '> Yes</div><p>Will show a bubble over the users avatar in the crowd if you click on their username in the chat window (if animations are on).</p></div>');
-      settings.find('div.fields').first().append('<div><span>Display</span><div>Turntable Default <input type="radio" name="displaytype" class="displaytype" value="-1" ' + ((window.izzmo.ui.settings.displayType != -1) ? '' : 'checked') + '><br />3-columns <input type="radio" name="displaytype" class="displaytype" value="0" ' + ((window.izzmo.ui.settings.displayType != 0) ? '' : 'checked') + '><br />Queue & Guest List Stacked <input type="radio" name="displaytype" class="displaytype" value="1" ' + ((window.izzmo.ui.settings.displayType != 1) ? '' : 'checked') + '><br />Queue & Chat Stacked <input type="radio" name="displaytype" class="displaytype" value="2" ' + ((window.izzmo.ui.settings.displayType != 2) ? '' : 'checked') + '><br /></div></div>');
+      settings.find('div.fields').first().append('<div><span>Desktop Notifications</span><div><input type="radio" name="notifications" class="notifications" value="0" ' + ((window.tte.ui.settings.notifications) ? '' : 'checked') + '> No <input type="radio" name="notifications" class="notifications" value="1"' + ((window.tte.ui.settings.notifications) ? 'checked' : '') + '> Yes</div></div>');
+      settings.find('div.fields').first().append('<div><span>Avatar Tooltip</span><div><input type="radio" name="avatar_tooltip" class="avatar_tooltip" value="0" ' + ((window.tte.ui.settings.showChatAvatarTooltip) ? '' : 'checked') + '> No <input type="radio" name="avatar_tooltip" class="avatar_tooltip" value="1" ' + ((window.tte.ui.settings.showChatAvatarTooltip) ? 'checked' : '') + '> Yes</div><p>Will show a bubble over the users avatar in the crowd if you click on their username in the chat window (if animations are on).</p></div>');
+      settings.find('div.fields').first().append('<div><span>Display</span><div>Turntable Default <input type="radio" name="displaytype" class="displaytype" value="-1" ' + ((window.tte.ui.settings.displayType != -1) ? '' : 'checked') + '><br />3-columns <input type="radio" name="displaytype" class="displaytype" value="0" ' + ((window.tte.ui.settings.displayType != 0) ? '' : 'checked') + '><br />Queue & Guest List Stacked <input type="radio" name="displaytype" class="displaytype" value="1" ' + ((window.tte.ui.settings.displayType != 1) ? '' : 'checked') + '><br />Queue & Chat Stacked <input type="radio" name="displaytype" class="displaytype" value="2" ' + ((window.tte.ui.settings.displayType != 2) ? '' : 'checked') + '><br /></div></div>');
       settings.find('div.fields').first().append('<div><span>Notification Keywords:</span><div><input type="text" id="chat-keywords" style="width: 125px; font-size: 18px;" /></div><p>If you would like to receive notifications for keywords other than your own username, you can enter them here.</p></div>');
       settings.find('div.fields').first().append('<div style="padding: 5px; font-size: 15px; text-align: left;"><span style="float: none;"><ul id="keywords"></ul></div>');
       
       settings.find('input#chat-keywords').bind('keypress', function(e) {
-        if(e.keyCode == 13 && $.inArray(this.value, window.izzmo.ui.settings.notifierKeywords) < 0) {
+        if(e.keyCode == 13 && $.inArray(this.value, window.tte.ui.settings.notifierKeywords) < 0) {
           var html = $('<li><span id="name">' + this.value.toLowerCase() + '</span> <a href="#" title="Remove Keyword"><img src="http://www.pinnacleofdestruction.net/tt/images/x.gif" alt="Remove Keyword" /></a></li>');
           html.find('a').bind('click', function(e) {
             e.preventDefault();
             var container = $(this).parent(), keyword = container.find('span#name').html();
-            window.izzmo.ui.settings.notifierKeywords.splice($.inArray(keyword, window.izzmo.ui.settings.notifierKeywords), 1);
-            window.izzmo.eventManager.queue({api: 'notifierKeywords.remove', 'keyword': this.value.toLowerCase() });
+            window.tte.ui.settings.notifierKeywords.splice($.inArray(keyword, window.tte.ui.settings.notifierKeywords), 1);
+            window.tte.eventManager.queue({api: 'notifierKeywords.remove', 'keyword': this.value.toLowerCase() });
             container.remove();
           });
-          window.izzmo.ui.settings.notifierKeywords.push(this.value.toLowerCase());
-          window.izzmo.eventManager.queue({api: 'notifierKeywords.add', keyword: this.value.toLowerCase() });
+          window.tte.ui.settings.notifierKeywords.push(this.value.toLowerCase());
+          window.tte.eventManager.queue({api: 'notifierKeywords.add', keyword: this.value.toLowerCase() });
           settings.find('ul#keywords').append(html);
           this.value = "";
         }
       });
       
-      $.each(window.izzmo.ui.settings.notifierKeywords, function(i, v) {
+      $.each(window.tte.ui.settings.notifierKeywords, function(i, v) {
         if(v == undefined) {
-          delete window.izzmo.ui.settings.notifierKeywords[i];
+          delete window.tte.ui.settings.notifierKeywords[i];
           return;
         }
         var html = $('<li><span id="name">' + v.toLowerCase() + '</span> <a href="#" title="Remove Keyword"><img src="http://www.pinnacleofdestruction.net/tt/images/x.gif" alt="Remove Keyword" /></a></li>');
           html.find('a').bind('click', function(e) {
             e.preventDefault();
             var container = $(this).parent();
-            window.izzmo.ui.settings.notifierKeywords.splice($.inArray(keyword, window.izzmo.ui.settings.notifierKeywords), 1);
+            window.tte.ui.settings.notifierKeywords.splice($.inArray(keyword, window.tte.ui.settings.notifierKeywords), 1);
             container.remove();
           });
           settings.find('ul#keywords').append(html);
@@ -1385,9 +1385,9 @@
     });
     
     // get settings from extension
-    window.izzmo.eventManager.queue({api: 'settings', code: 'get'}, function(response) {
+    window.tte.eventManager.queue({api: 'settings', code: 'get'}, function(response) {
       // check if want notifications
-      window.izzmo.ui.settings = $.extend(window.izzmo.ui.settings, response.settings);
+      window.tte.ui.settings = $.extend(window.tte.ui.settings, response.settings);
       if(response.settings.notifications == -1 && window.webkitNotifications.checkPermission() == 1) {
         util.showOverlay(util.buildTree([
             "div.modal", {}, ["div.close-x",
@@ -1401,8 +1401,8 @@
                 event: {
                     click: function() {
                       window.webkitNotifications.requestPermission();
-                      window.izzmo.eventManager.queue({api: 'settings', code: 'set', settings: {notifications: 1}});
-                      window.izzmo.ui.settings = 1;
+                      window.tte.eventManager.queue({api: 'settings', code: 'set', settings: {notifications: 1}});
+                      window.tte.ui.settings = 1;
                       util.hideOverlay();
                     }
                 }
@@ -1411,8 +1411,8 @@
                 event: {
                     click: function() {
                       util.hideOverlay();
-                      window.izzmo.eventManager.queue({api: 'settings', code: 'set', settings: {notifications: 0}});
-                      window.izzmo.ui.settings = 0;
+                      window.tte.eventManager.queue({api: 'settings', code: 'set', settings: {notifications: 0}});
+                      window.tte.ui.settings = 0;
                     }
                 },
                 style: {
@@ -1421,25 +1421,25 @@
             }, "No"]]
         ));
       }
-      if(!window.izzmo.ui.settings.animations)
-        window.izzmo.ui.setAnimations(false);
+      if(!window.tte.ui.settings.animations)
+        window.tte.ui.setAnimations(false);
       
       // update UI if necessary
-      window.izzmo.ui.setDisplay(window.izzmo.ui.settings.displayType, false);
+      window.tte.ui.setDisplay(window.tte.ui.settings.displayType, false);
       
       // setup new version notifier
-      if(window.izzmo.ui.version !== window.izzmo.ui.settings.currentVersion) {
-        window.izzmo.eventManager.queue({api: 'set_version', version: window.izzmo.ui.version});
+      if(window.tte.ui.version !== window.tte.ui.settings.currentVersion) {
+        window.tte.eventManager.queue({api: 'set_version', version: window.tte.ui.version});
         var html = $(util.buildTree(
           ["div.modal", {},
             ["div.close-x", {event: { click: util.hideOverlay } }],
-            ["h1", "New Version " + window.izzmo.ui.version + "!"],
+            ["h1", "New Version " + window.tte.ui.version + "!"],
             ["br"],
             ["div.field", {}, ''],
             ["div.ok-button.centered-button", { event: { click: util.hideOverlay } } ]
           ]
         ));
-        html.find('div.field').html("See what's new in this version: <br /><br />" + window.izzmo.ui.newUpdatesMsg);
+        html.find('div.field').html("See what's new in this version: <br /><br />" + window.tte.ui.newUpdatesMsg);
         util.showOverlay(html);
       }
     });
@@ -1450,7 +1450,7 @@
     roomCheck = setInterval(function() {
       wait++;
       if($($('#turntable').find('div.roomView > div')[1]).height() > 0) {
-        window.izzmo.ui.init();
+        window.tte.ui.init();
         clearInterval(roomCheck);
       }
       else if(wait > 10)
