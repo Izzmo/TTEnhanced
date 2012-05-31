@@ -295,10 +295,9 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '2.1.6',
+    version: '2.2.0',
     newUpdatesMsg: '<ul>'
-                  +'<li>Bug Fix: Updated settings screen so it is easier to see that you need to press enter to enter custom notifications.</li>'
-                  +'<li>Bug Fix: When updating from a previous version, the guest list and/or chat would overlay one another.</li>'
+                  +'<li>New Feature: Command Line Interface (CLI). Integrates a command-like feeling.</li>'
                   +'</ul>',
 
     upvotes: 0,
