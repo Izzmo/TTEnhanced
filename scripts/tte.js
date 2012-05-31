@@ -99,12 +99,12 @@
       queue: function(params, callback) {
         var msgId = window.tte.eventManager.messages.push(callback),
             data = $.extend({'msgId': msgId}, params);
-        $('#izzui-msg').html(JSON.stringify(data))[0].dispatchEvent(window.tte.eventManager.event);
+        $('#tteui-msg').html(JSON.stringify(data))[0].dispatchEvent(window.tte.eventManager.event);
       },
       init: function() {
         // setup event handler
-        window.tte.eventManager.event.initEvent("izzEventWeb", true, true);
-        $('#izzui-msg').bind('izzEventExt', function() {
+        window.tte.eventManager.event.initEvent("tteEventWeb", true, true);
+        $('#tteui-msg').bind('tteEventExt', function() {
           var data = JSON.parse($(this).html()),
               func = window.tte.eventManager.messages[data.msgId-1];
           console.log('Received from extension: ');
@@ -805,14 +805,14 @@
     },
     setAnimations: function(on) {
       if(on) {
-        $('#izzmo-settings-menu-animations-icon').parent().find('div').first().css({backgroundImage: 'url(http://www.pinnacleofdestruction.net/tt/images/check.png)'});
+        $('#tte-settings-menu-animations-icon').parent().find('div').first().css({backgroundImage: 'url(http://www.pinnacleofdestruction.net/tt/images/check.png)'});
         window.tte.ttRoomObjs.add_listener = window.tte.ttRoomObjs.__add_listener;
         delete window.tte.ttRoomObjs.__add_listener;
         for(var user in window.tte.ttObj.users)
           window.tte.ttObj.refreshRoomUser(window.tte.ttObj.users[user]);
       }
       else {
-        $('#izzmo-settings-menu-animations-icon').parent().find('div').first().css({backgroundImage: 'url(http://www.pinnacleofdestruction.net/tt/images/cross.png)'});
+        $('#tte-settings-menu-animations-icon').parent().find('div').first().css({backgroundImage: 'url(http://www.pinnacleofdestruction.net/tt/images/cross.png)'});
         for(var listener in window.tte.ttRoomObjs.listeners)
           window.tte.ttRoomObjs.rem_listener({userid: listener});
         window.tte.ttRoomObjs.__add_listener = window.tte.ttRoomObjs.add_listener;
@@ -1179,30 +1179,30 @@
     window.tte.ttObj.appendChatMessage = window.tte.ui.appendChatMessage;
     
     // add animations button to menu
-    $('#izzmo-settings-menu-animations-icon').parent().remove();
-    $('#menuh').find('div.menuItem').last().before('<div class="menuItem"><div class="settingsHead" id="izzmo-settings-menu-animations-icon" /><div class="text">Animations</div></div>');
-    $('#izzmo-settings-menu-animations-icon')
+    $('#tte-settings-menu-animations-icon').parent().remove();
+    $('#menuh').find('div.menuItem').last().before('<div class="menuItem"><div class="settingsHead" id="tte-settings-menu-animations-icon" /><div class="text">Animations</div></div>');
+    $('#tte-settings-menu-animations-icon')
     .parent()
     .bind('click', function() {
       window.tte.ui.toggleAnimations(this);
     });
     
     // add moderation button to menu
-    $('#izzmo-settings-menu-moderation').remove();
+    $('#tte-settings-menu-moderation').remove();
     if(window.tte.ttObj.isMod()) {
-      $('#menuh').find('div.menuItem').last().before('<div id="izzmo-settings-menu-moderation" class="menuItem">Room Moderation</div>');
-      $('#izzmo-settings-menu-moderation').bind('click', function() {
+      $('#menuh').find('div.menuItem').last().before('<div id="tte-settings-menu-moderation" class="menuItem">Room Moderation</div>');
+      $('#tte-settings-menu-moderation').bind('click', function() {
         var settings = $(util.buildTree(
-        ["div#izzui-settings.settingsOverlay.modal", {},
+        ["div#tteui-settings.settingsOverlay.modal", {},
           ["div.close-x", { event: { click: util.hideOverlay } }],
           ["h1", "Room Moderation"],
           ["br"],
           ["div.spots", {} ],
           ["div.save-changes.centered-button", { event: {
             click: function() {
-              window.tte.spotSaving.spot_saving = ($('#izzui-settings input.spot_saving')[0].checked);
-              window.tte.spotSaving.boot_msg = $('#izzui-settings #boot_msg').val();
-              window.tte.settings.boot_linkers = ($('#izzui-settings input.links_enabled')[0].checked);
+              window.tte.spotSaving.spot_saving = ($('#tteui-settings input.spot_saving')[0].checked);
+              window.tte.spotSaving.boot_msg = $('#tteui-settings #boot_msg').val();
+              window.tte.settings.boot_linkers = ($('#tteui-settings input.links_enabled')[0].checked);
               util.hideOverlay();
             }
           } }],
@@ -1310,26 +1310,26 @@
     window.turntable.fetchBuddyPresence();
     
     // add settings button to menu
-    $('#izzmo-settings-menu-settings').remove();
-    $('#menuh').find('div.menuItem').last().before('<div id="izzmo-settings-menu-settings" class="menuItem">TTEnhanced</div>');
-    $('#izzmo-settings-menu-settings').bind('click', function() {
+    $('#tte-settings-menu-settings').remove();
+    $('#menuh').find('div.menuItem').last().before('<div id="tte-settings-menu-settings" class="menuItem">TTEnhanced</div>');
+    $('#tte-settings-menu-settings').bind('click', function() {
       var settings = $(util.buildTree(
-        ["div#izzui-settings.settingsOverlay.modal", {},
+        ["div#tteui-settings.settingsOverlay.modal", {},
           ["div.close-x", { event: { click: util.hideOverlay } }],
-          ["h1", "Izzmo's UI Settings"],
+          ["h1", "TTEnhanced UI Settings"],
           ["br"],
           ["div.fields", {} ],
           ["div.save-changes.centered-button", { event: {
             click: function() {
               var type = -1;
-              $('#izzui-settings input.displaytype').each(function(i) {
+              $('#tteui-settings input.displaytype').each(function(i) {
                 if(this.checked) {
                   type = i-1;
                   return false;
                 }
               });
-              window.tte.ui.settings.notifications = ($('#izzui-settings input.notifications')[1].checked);
-              window.tte.ui.settings.showChatAvatarTooltip = ($('#izzui-settings input.avatar_tooltip')[1].checked);
+              window.tte.ui.settings.notifications = ($('#tteui-settings input.notifications')[1].checked);
+              window.tte.ui.settings.showChatAvatarTooltip = ($('#tteui-settings input.avatar_tooltip')[1].checked);
 
               if(type != window.tte.ui.settings.displayType)
                 window.tte.ui.setDisplay(type, true);

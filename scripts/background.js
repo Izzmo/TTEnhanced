@@ -6,7 +6,7 @@
 
   var page = chrome.extension.getBackgroundPage();
   if(page != null) {
-    //page.turntable.addEventListener("message", window.izzmo.ui.listener);
+    //page.turntable.addEventListener("message", window.tte.ui.listener);
   }
 
   chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {

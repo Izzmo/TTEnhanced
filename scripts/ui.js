@@ -1,6 +1,6 @@
-$('[id*="izzui"]').remove();
-$('body').append('<div id="izzui-msg" style="display: none;"></div>');
-$('#izzui-msg').bind('izzEventWeb', function() {
+$('[id*="tteui"]').remove();
+$('body').append('<div id="tteui-msg" style="display: none;"></div>');
+$('#tteui-msg').bind('tteEventWeb', function() {
   var data = JSON.parse($(this).html());
   var msgId = data.msgId;
   console.log('Received from web: ');
@@ -33,7 +33,7 @@ $('#izzui-msg').bind('izzEventWeb', function() {
 
 var switchDisplay = function(type) {
   if(type == undefined) type = 0;
-  $('#izzui').remove();
+  $('#tteui').remove();
   switch(type) {
     case -1:
       break;
@@ -41,7 +41,7 @@ var switchDisplay = function(type) {
     case 1:
       script = document.createElement('link');
       script.type = 'text/css';
-      script.id = 'izzui';
+      script.id = 'tteui';
       script.rel = "stylesheet";
       script.href = chrome.extension.getURL('/styles/style-stack-1.css') + "?" + Date.now();
       document.head.appendChild(script);
@@ -50,7 +50,7 @@ var switchDisplay = function(type) {
     case 2:
       script = document.createElement('link');
       script.type = 'text/css';
-      script.id = 'izzui';
+      script.id = 'tteui';
       script.rel = "stylesheet";
       script.href = chrome.extension.getURL('/styles/style-stack-2.css') + "?" + Date.now();
       document.head.appendChild(script);
@@ -59,7 +59,7 @@ var switchDisplay = function(type) {
     default:
       script = document.createElement('link');
       script.type = 'text/css';
-      script.id = 'izzui';
+      script.id = 'tteui';
       script.rel = "stylesheet";
       script.href = chrome.extension.getURL('/styles/style.css') + "?" + Date.now();
       document.head.appendChild(script);
@@ -69,26 +69,26 @@ var switchDisplay = function(type) {
 
 var script = document.createElement('script');
     script.type = 'text/javascript';
-    script.id = 'izzui';
+    script.id = 'tteui';
     script.src = chrome.extension.getURL('/scripts/tte.js') + "?" + Date.now();
     document.head.appendChild(script);
     
     script = document.createElement('link');
     script.type = 'text/css';
-    script.id = 'izzui-base';
+    script.id = 'tteui-base';
     script.rel = "stylesheet";
     script.href = chrome.extension.getURL('/styles/base.css') + "?" + Date.now();
     document.head.appendChild(script);
     
     script = document.createElement('link');
     script.type = 'text/css';
-    script.id = 'izzui-jq';
+    script.id = 'tteui-jq';
     script.rel = "stylesheet";
     script.href = chrome.extension.getURL('/styles/jquery-ui.css') + "?" + Date.now();
     document.head.appendChild(script);
     
 window.sendEvent = document.createEvent("Event");
-window.sendEvent.initEvent("izzEventExt", true, true);
+window.sendEvent.initEvent("tteEventExt", true, true);
 window.sendData = function(data) {
-  $('#izzui-msg').html(JSON.stringify(data))[0].dispatchEvent(window.sendEvent);
+  $('#tteui-msg').html(JSON.stringify(data))[0].dispatchEvent(window.sendEvent);
 }
