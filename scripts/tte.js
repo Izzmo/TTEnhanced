@@ -1320,20 +1320,23 @@
           ["div.fields", {} ],
           ["div.save-changes.centered-button", { event: {
             click: function() {
-              var type = -1;
-              $('#tteui-settings input.displaytype').each(function(i) {
-                if(this.checked) {
-                  type = i-1;
-                  return false;
-                }
-              });
-              window.tte.ui.settings.notifications = ($('#tteui-settings input.notifications')[1].checked);
-              window.tte.ui.settings.showChatAvatarTooltip = ($('#tteui-settings input.avatar_tooltip')[1].checked);
+              var type = Number($('select#tteUiStyle').val());
+              window.tte.ui.settings.notifications = ($('#tteui-settings input.tteNotifications')[1].checked);
+              window.tte.ui.settings.showChatAvatarTooltip = ($('#tteui-settings input.tteAvatarToolTip')[1].checked);
 
               if(type != window.tte.ui.settings.displayType)
                 window.tte.ui.setDisplay(type, true);
               window.tte.ui.settings.displayType = type;
               
+              window.tte.ui.settings.notifierKeywords = [];
+              var keywordsRaw = $('#tteChatKeywords').val().split(',');
+              for(var i = 0; i < keywordsRaw.length; i++) {
+                console.log(keywordsRaw[i]);
+                var word = $.trim(keywordsRaw[i])
+                if(word != "")
+                  window.tte.ui.settings.notifierKeywords.push(word);
+              }
+
               window.tte.eventManager.queue({api: 'settings', code: 'set', settings: window.tte.ui.settings});
               util.hideOverlay();
             }
@@ -1341,43 +1344,15 @@
           ["br"]
         ]
       ));
-      settings.find('div.fields').first().append('<div><span>Desktop Notifications</span><div><input type="radio" name="notifications" class="notifications" value="0" ' + ((window.tte.ui.settings.notifications) ? '' : 'checked') + '> No <input type="radio" name="notifications" class="notifications" value="1"' + ((window.tte.ui.settings.notifications) ? 'checked' : '') + '> Yes</div></div>');
-      settings.find('div.fields').first().append('<div><span>Avatar Tooltip</span><div><input type="radio" name="avatar_tooltip" class="avatar_tooltip" value="0" ' + ((window.tte.ui.settings.showChatAvatarTooltip) ? '' : 'checked') + '> No <input type="radio" name="avatar_tooltip" class="avatar_tooltip" value="1" ' + ((window.tte.ui.settings.showChatAvatarTooltip) ? 'checked' : '') + '> Yes</div><p>Will show a bubble over the users avatar in the crowd if you click on their username in the chat window (if animations are on).</p></div>');
-      settings.find('div.fields').first().append('<div><span>Display</span><div>Turntable Default <input type="radio" name="displaytype" class="displaytype" value="-1" ' + ((window.tte.ui.settings.displayType != -1) ? '' : 'checked') + '><br />3-columns <input type="radio" name="displaytype" class="displaytype" value="0" ' + ((window.tte.ui.settings.displayType != 0) ? '' : 'checked') + '><br />Queue & Guest List Stacked <input type="radio" name="displaytype" class="displaytype" value="1" ' + ((window.tte.ui.settings.displayType != 1) ? '' : 'checked') + '><br />Queue & Chat Stacked <input type="radio" name="displaytype" class="displaytype" value="2" ' + ((window.tte.ui.settings.displayType != 2) ? '' : 'checked') + '><br /></div></div>');
-      settings.find('div.fields').first().append('<div><span>Notification Keywords:</span><div><input type="text" id="chat-keywords" style="width: 125px; font-size: 18px;" /></div><p>If you would like to receive notifications for keywords other than your own username, you can enter them here.</p></div>');
-      settings.find('div.fields').first().append('<div style="padding: 5px; font-size: 15px; text-align: left;"><span style="float: none;"><ul id="keywords"></ul></div>');
+      var fields = settings.find('div.fields:first');
+      fields.append('<div><span class="tteOptionLabel">Desktop Notifications</span> <input type="radio" name="tteNotifications" class="tteNotifications" value="0" ' + ((window.tte.ui.settings.notifications) ? '' : 'checked') + '> No / <input type="radio" name="tteNotifications" class="tteNotifications" value="1" ' + ((window.tte.ui.settings.notifications) ? 'checked' : '') + '> Yes</div>');
+      fields.append('<div><span class="tteOptionLabel">Avatar Tooltip</span><input type="radio" name="tteAvatarToolTip" class="tteAvatarToolTip" value="0" ' + ((window.tte.ui.settings.showChatAvatarTooltip) ? '' : 'checked') + '> No / <input type="radio" name="tteAvatarToolTip" class="tteAvatarToolTip" value="1" ' + ((window.tte.ui.settings.showChatAvatarTooltip) ? 'checked' : '') + '> Yes<p>Will show a bubble over the users avatar in the crowd if you click on their username in the chat window (if animations are on).</p></div>');
+      fields.append('<div><span class="tteOptionLabel">Display</span><select name="tteUiStyle" id="tteUiStyle"><option value="-1" ' + ((window.tte.ui.settings.displayType != -1) ? '' : 'selected') + '>Default</option><option value="0" ' + ((window.tte.ui.settings.displayType != 0) ? '' : 'selected') + '>3 Columns</option><option value="1" ' + ((window.tte.ui.settings.displayType != 1) ? '' : 'selected') + '>2 Columns - Queue/Guest Stacked</option><option value="2" ' + ((window.tte.ui.settings.displayType != 2) ? '' : 'selected') + '>2 Columns - Queue/Chat Stacked</option></select></div>');
+      fields.append('<div><span class="tteOptionLabel">Notification Keywords:</span><input type="text" id="tteChatKeywords"/><p>If you would like to receive notifications for keywords other than your own username, you can enter them here -- comma delimited.</p></div>');
+      fields.append('<div style="padding: 5px; font-size: 15px; text-align: left;"><span style="float: none;"><ul id="keywords"></ul></div>');
       
-      settings.find('input#chat-keywords').bind('keypress', function(e) {
-        if(e.keyCode == 13 && $.inArray(this.value, window.tte.ui.settings.notifierKeywords) < 0) {
-          var html = $('<li><span id="name">' + this.value.toLowerCase() + '</span> <a href="#" title="Remove Keyword"><img src="http://www.pinnacleofdestruction.net/tt/images/x.gif" alt="Remove Keyword" /></a></li>');
-          html.find('a').bind('click', function(e) {
-            e.preventDefault();
-            var container = $(this).parent(), keyword = container.find('span#name').html();
-            window.tte.ui.settings.notifierKeywords.splice($.inArray(keyword, window.tte.ui.settings.notifierKeywords), 1);
-            window.tte.eventManager.queue({api: 'notifierKeywords.remove', 'keyword': this.value.toLowerCase() });
-            container.remove();
-          });
-          window.tte.ui.settings.notifierKeywords.push(this.value.toLowerCase());
-          window.tte.eventManager.queue({api: 'notifierKeywords.add', keyword: this.value.toLowerCase() });
-          settings.find('ul#keywords').append(html);
-          this.value = "";
-        }
-      });
-      
-      $.each(window.tte.ui.settings.notifierKeywords, function(i, v) {
-        if(v == undefined) {
-          delete window.tte.ui.settings.notifierKeywords[i];
-          return;
-        }
-        var html = $('<li><span id="name">' + v.toLowerCase() + '</span> <a href="#" title="Remove Keyword"><img src="http://www.pinnacleofdestruction.net/tt/images/x.gif" alt="Remove Keyword" /></a></li>');
-          html.find('a').bind('click', function(e) {
-            e.preventDefault();
-            var container = $(this).parent();
-            window.tte.ui.settings.notifierKeywords.splice($.inArray(keyword, window.tte.ui.settings.notifierKeywords), 1);
-            container.remove();
-          });
-          settings.find('ul#keywords').append(html);
-          this.value = "";
+      settings.ready(function(){
+        setTimeout("$('#tteChatKeywords').val(window.tte.ui.settings.notifierKeywords.join(','))",500);
       });
       
       util.showOverlay(settings);

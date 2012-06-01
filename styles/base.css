@@ -207,3 +207,30 @@ div.tteTrackHistoryVotes {
   font-size: 10px;
   text-align: center;
 }
+
+div#tteui-settings h1 {
+  padding-left: 60px;
+}
+
+div#tteui-settings div.fields > div {
+  padding-bottom: 15px;
+}
+
+div#tteui-settings div.fields > div > span.tteOptionLabel {
+  padding-right: 20px; 
+}
+
+div#tteui-settings div.fields > div p {
+  padding-top: 5px;
+}
+
+div#tteui-settings div.fields > div select,
+div#tteui-settings div.fields > div input {
+  font-size:12px;
+  margin:0;
+}
+
+div#tteui-settings div.fields > div #tteChatKeywords {
+  padding: 2px 6px;
+  width: 275px;
+}
