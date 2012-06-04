@@ -72,6 +72,12 @@ var script = document.createElement('script');
     script.id = 'tteui';
     script.src = chrome.extension.getURL('/scripts/tte.js') + "?" + Date.now();
     document.head.appendChild(script);
+
+    script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.id = 'ttecli';
+    script.src = chrome.extension.getURL('/scripts/turntablecli.js') + "?" + Date.now();
+    document.head.appendChild(script);
     
     script = document.createElement('link');
     script.type = 'text/css';
