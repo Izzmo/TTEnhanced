@@ -298,6 +298,7 @@
             if(allOnDeck == total)
               window.tte.spotSaving.spot_saving = false;
             else {
+              console.log(d);
               if($.inArray(d.user[0].name.toLowerCase(), window.tte.spotSaving.spot_users) < 0) {
                 if(!window.tte.ttObj.isMod(d.user[0].userid) && allOnDeck != total) {
                   window.tte.spotSaving.spot_attempts.push(d.user[0].userid);
@@ -1067,9 +1068,18 @@
           ["div.spots", {} ],
           ["div.save-changes.centered-button", { event: {
             click: function() {
-              window.tte.spotSaving.spot_saving = ($('#tteui-settings input.spot_saving')[0].checked);
-              window.tte.spotSaving.boot_msg = $('#tteui-settings #boot_msg').val();
-              window.tte.settings.boot_linkers = ($('#tteui-settings input.links_enabled')[0].checked);
+              window.tte.spotSaving.spot_saving = ($('#tteui-settings input#tteSpotSaving')[0].checked);
+              window.tte.spotSaving.boot_msg = $('#tteui-settings input#tteSpotSavingBootMessage').val();
+              window.tte.settings.boot_linkers = ($('#tteui-settings input#tteBootRoomLinkers')[0].checked);
+
+              window.tte.spotSaving.spot_users = [];
+              var usersRaw = $('#tteSpotSavingUsers').val().split(',');
+              for(var i = 0; i < usersRaw.length; i++) {
+                var user = $.trim(usersRaw[i]).slice(1);
+                if(user != "")
+                  window.tte.spotSaving.spot_users.push(user);
+              }
+
               util.hideOverlay();
             }
           } }],
@@ -1077,50 +1087,112 @@
         ]
       ));
 
-      settings.find('div.spots').first().append('<div><span>Boot Room Linkers?</span><div style="text-align: right; padding-right: 100px;"><input type="checkbox" class="links_enabled" value="1"' + ((window.tte.settings.boot_linkers) ? 'checked' : '') + '></div></div>');
-      settings.find('div.spots').first().append('<p>If enabled, will automatically boot non-mods from the room for linking to other Turntable.fm rooms.</p>');
-      settings.find('div.spots').first().append('<div><span>Save Spots?</span><div style="text-align: right; padding-right: 100px;"><input type="checkbox" class="spot_saving" value="1"' + ((window.tte.spotSaving.spot_saving) ? 'checked' : '') + '></div></div>');
-      settings.find('div.spots').first().append('<p>Spot saving allows you to moderate who gets up on stage. If enabled, any of the usernames you list below will be allowed on deck, and anyone else who tries to get up will be automatically booted off stage.</p><p>If spot saving and AutoDJ are on, you will not get up on deck unless you add yourself to the list.</p>');
-      settings.find('div.spots').first().append('<div><span>Username:</span><input type="text" id="user" size="26" style="font-size: 18px;" /><br /><p>Press the \'enter\' key after you have entered the person\'s name to add them to the list.</p></div>');
-      settings.find('div.spots').first().append('<div style="padding: 5px; font-size: 15px; text-align: left;"><span style="float: none;">Allowed DJ\'s:</span><ul id="djs"></ul></div>');
-      settings.find('div.spots').first().append('<div><span>Boot Message:</span></div>');
-      settings.find('div.spots').first().append('<div><textarea id="boot_msg" cols="30" rows="3" style="font-size: 18px;">' + window.tte.spotSaving.boot_msg + '</textarea></div>');
-      
-      var users = [];
-      $.each(window.tte.ttObj.users, function(i, v) {
-        users.push(v.name);
-      });
-      settings.find('input#user').autocomplete({
-        source: users
-      })
-      .bind('keypress', function(e) {
-        if(e.keyCode == 13 && $.inArray(this.value, window.tte.spotSaving.spot_users) < 0) {
-          var html = $('<li><span id="name">' + this.value.toLowerCase() + '</span> <a href="#" title="Remove Person"><img src="http://www.pinnacleofdestruction.net/tt/images/x.gif" alt="Remove Person" /></a></li>');
-          html.find('a').bind('click', function(e) {
-            e.preventDefault();
-            var container = $(this).parent();
-            delete window.tte.spotSaving.spot_users[$.inArray(container.find('span#name').html(), window.tte.spotSaving.spot_users)];
-            container.remove();
+      var spots = settings.find('div.spots:first');
+      spots.append('<div><span class="tteOptionLabel">Boot Room Linkers?</span> <input type="checkbox" id="tteBootRoomLinkers" value="1"' + ((window.tte.settings.boot_linkers) ? 'checked' : '') + '><p>If enabled, will automatically boot non-mods from the room for linking to other Turntable.fm rooms.</p></div>');
+      spots.append('<div><span class="tteOptionLabel">Save Spots?</span> <input type="checkbox" id="tteSpotSaving" value="1"' + ((window.tte.spotSaving.spot_saving) ? 'checked' : '') + '><p>Spot saving allows you to moderate who gets up on stage. If enabled, any of the usernames you list below will be allowed on deck, and anyone else who tries to get up will be automatically booted off stage.</p></div>');
+      spots.append('<div><span class="tteOptionLabel">Usernames:</span> <input type="text" id="tteSpotSavingUsers" /><p>Use commas to separate multiple names. Use two "@"s for names that start with them.</p></div>');
+      spots.append('<div><span class="tteOptionLabel">Boot Message:</span> <input type="text" id="tteSpotSavingBootMessage" /></div>');
+
+      settings.ready(function(){
+        setTimeout(function(){
+          // build list
+          console.log(window.tte.spotSaving.spot_users);
+          var t = ""
+          $.each(window.tte.spotSaving.spot_users, function(i,v){
+            t += (t == "" ? "@" : ", @") + v;
+            $('#tteSpotSavingUsers').val(t);
           });
-          window.tte.spotSaving.spot_users.push(this.value.toLowerCase());
-          settings.find('ul#djs').append(html);
-          this.value = "";
-        }
-      });
-      $.each(window.tte.spotSaving.spot_users, function(i, v) {
-        if(v == undefined) {
-          delete window.tte.spotSaving.spot_users[i];
-          return;
-        }
-        var html = $('<li><span id="name">' + v.toLowerCase() + '</span> <a href="#" title="Remove Person"><img src="http://www.pinnacleofdestruction.net/tt/images/x.gif" alt="Remove Person" /></a></li>');
-          html.find('a').bind('click', function(e) {
-            e.preventDefault();
-            var container = $(this).parent();
-            delete window.tte.spotSaving.spot_users[$.inArray(container.find('span#name').html(), window.tte.spotSaving.spot_users)];
-            container.remove();
+        },500);
+        setTimeout("$('#tteui-settings input#tteSpotSavingBootMessage').val(window.tte.spotSaving.boot_msg);",500);
+
+        setTimeout(function(){
+
+          $('#tteSpotSavingUsers').keydown(function(event){
+            var d = event;
+            var a = d.target;
+            var b = d.charCode || d.keyCode;
+            if (window.tte.suggestedSpotSavingUser && a.value.match(/@/)) {
+                if (b == 13 || b == 9) {
+                    window.tte.ttObj.chooseSuggestedName(a, window.tte.suggestedSpotSavingUser);
+                    return false;
+                } else {
+                    if (b == 38) {
+                        var f = $(".suggestedName.selected").prev();
+                        if (f.length) {
+                            window.tte.suggestedSpotSavingUser = $(".suggestedName.selected").removeClass("selected").prev().addClass("selected").text();
+                        }
+                        return false;
+                    } else {
+                        if (b == 40) {
+                            var c = $(".suggestedName.selected").next();
+                            if (c.length) {
+                                window.tte.suggestedSpotSavingUser = $(".suggestedName.selected").removeClass("selected").next().addClass("selected").text();
+                            }
+                            return false;
+                        } else {
+                            if (b == 27 || (b == 39 && a.selectionEnd == a.value.length)) {
+                                window.tte.ttObj.cancelNameSuggest();
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
           });
-          settings.find('ul#djs').append(html);
-          this.value = "";
+
+          window.tte.suggestedSpotSavingUser = false;
+          $('#tteSpotSavingUsers').keyup(function(event){
+            var c = event;
+            var g = c.target;
+            var h = c.charCode || c.keyCode;
+            var j = window.tte.ttObj;
+            if (h == 38 || h == 40 || h == 27 || (h == 39 && g.selectionEnd == g.value.length)) {
+              return;
+            }
+            var k = g.value.substring(0, c.target.selectionEnd);
+            var b = false;
+            var i = window.tte.ttObj.lastValidAtSymbolIndex(k);
+            if (i >= 0) {
+              b = k.slice(i + 1).toLowerCase();
+            }
+            $("#nameSuggest").remove();
+            window.tte.suggestedSpotSavingUser = false;
+            if (b === false) {
+              return;
+            }
+            var f = [];
+            $.each(window.tte.ttObj.users,
+              function(x,y) {
+                var e = (y.name[0] == "@") ? y.name.slice(1) : y.name;
+                if (e.toLowerCase().slice(0, -1).indexOf(b) == 0) {
+                  f.push(y.name);
+                }
+              });
+            if (f.length) {
+                window.util.alphabetize(f);
+                var a = window.util.buildTree(window.Room.layouts.nameSuggest(f));
+                window.tte.suggestedSpotSavingUser = f[0];
+                $("div.settingsOverlay").append(a);
+                console.log("appending");
+                var d = $("#tteSpotSavingUsers").position();
+                $(a).css({
+                    left: d.left + 1 + "px",
+                    top: d.top + 1 - $(a).outerHeight() + "px"
+                });
+                $(".suggestedName").click(function(l) {
+                    j.chooseSuggestedName(false, $(l.target).text());
+                }).mouseover(function(l) {
+                    if (!$(this).hasClass("selected")) {
+                        window.tte.suggestedSpotSavingUser = $(this).text();
+                        $(".suggestedName.selected").removeClass("selected");
+                        $(this).addClass("selected");
+                    }
+                });
+            }
+            return true;
+          });
+
+        }, 500);
       });
       
       util.showOverlay(settings);
@@ -1217,7 +1289,6 @@
       fields.append('<div><span class="tteOptionLabel">Avatar Tooltip</span><input type="radio" name="tteAvatarToolTip" class="tteAvatarToolTip" value="0" ' + ((window.tte.ui.settings.showChatAvatarTooltip) ? '' : 'checked') + '> No / <input type="radio" name="tteAvatarToolTip" class="tteAvatarToolTip" value="1" ' + ((window.tte.ui.settings.showChatAvatarTooltip) ? 'checked' : '') + '> Yes<p>Will show a bubble over the users avatar in the crowd if you click on their username in the chat window (if animations are on).</p></div>');
       fields.append('<div><span class="tteOptionLabel">Display</span><select name="tteUiStyle" id="tteUiStyle"><option value="-1" ' + ((window.tte.ui.settings.displayType != -1) ? '' : 'selected') + '>Default</option><option value="0" ' + ((window.tte.ui.settings.displayType != 0) ? '' : 'selected') + '>3 Columns</option><option value="1" ' + ((window.tte.ui.settings.displayType != 1) ? '' : 'selected') + '>2 Columns - Queue/Guest Stacked</option><option value="2" ' + ((window.tte.ui.settings.displayType != 2) ? '' : 'selected') + '>2 Columns - Queue/Chat Stacked</option></select></div>');
       fields.append('<div><span class="tteOptionLabel">Notification Keywords:</span><input type="text" id="tteChatKeywords"/><p>If you would like to receive notifications for keywords other than your own username, you can enter them here -- comma delimited.</p></div>');
-      fields.append('<div style="padding: 5px; font-size: 15px; text-align: left;"><span style="float: none;"><ul id="keywords"></ul></div>');
       
       settings.ready(function(){
         setTimeout("$('#tteChatKeywords').val(window.tte.ui.settings.notifierKeywords.join(','))",500);

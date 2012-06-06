@@ -181,7 +181,8 @@ div.modal ul > li li {
   font-weight: normal;
 }
 
-#overlay div.settingsOverlay .fields div > p {
+#overlay div.settingsOverlay .fields div > p,
+#overlay div.settingsOverlay .spots div > p {
   font-size: 12px;
 }
 
@@ -212,20 +213,25 @@ div#tteui-settings h1 {
   padding-left: 60px;
 }
 
-div#tteui-settings div.fields > div {
+div#tteui-settings div.fields > div,
+div#tteui-settings div.spots > div {
   padding-bottom: 15px;
 }
 
-div#tteui-settings div.fields > div > span.tteOptionLabel {
+div#tteui-settings div.fields > div > span.tteOptionLabel,
+div#tteui-settings div.spots > div > span.tteOptionLabel {
   padding-right: 20px; 
 }
 
-div#tteui-settings div.fields > div p {
+div#tteui-settings div.fields > div p,
+div#tteui-settings div.spots > div p {
   padding-top: 5px;
 }
 
 div#tteui-settings div.fields > div select,
-div#tteui-settings div.fields > div input {
+div#tteui-settings div.fields > div input,
+div#tteui-settings div.spots > div select,
+div#tteui-settings div.spots > div input {
   font-size:12px;
   margin:0;
 }
@@ -233,4 +239,14 @@ div#tteui-settings div.fields > div input {
 div#tteui-settings div.fields > div #tteChatKeywords {
   padding: 2px 6px;
   width: 275px;
+}
+
+div#tteui-settings div.spots > div #tteSpotSavingUsers {
+  padding: 2px 6px;
+  width: 335px;
+}
+
+div#tteui-settings div.spots > div #tteSpotSavingBootMessage {
+  padding: 2px 6px;
+  width: 314px;
 }
