@@ -76,6 +76,27 @@ class TurntableProxy
 		else
 			@appendActionMessage "#{@room.users[userid].name} is not a DJ.", "RemoveDJ: "
 
+	quitDjing: ->
+		message =
+			api: "room.rem_dj"
+			roomid: @room.roomId
+
+		if @room.isDj()
+			@sendSocketMessage message
+			console.log "Removing DJ: You"
+		else
+			@appendActionMessage "You are not a DJ.", "QuitDJ: "
+
+	skipSong: ->
+		message = 
+			api: "room.stop_song"
+			roomid: @room.roomId
+
+		if @room.currentDj is @room.selfId
+			@sendSocketMessage message
+		else
+			@appendActionMessage "You are not the current DJ.", "Skip Song: "
+
 	awesomeSong: ->
 		@roomManager.callback "upvote"
 
@@ -96,6 +117,8 @@ class TurntableCli
 		"/lame"
 		"/mute"
 		"/pm"
+		"/quitdj"
+		"/skip"
 		"/snag"
 	]
 	
@@ -115,7 +138,7 @@ class TurntableCli
 			setTimeout @init, 200
 			return
 		else
-			console.log "TurntableCli Initialized"
+			console.log "TurntableCLI Initialized"
 
 		textForm = $ @turntableProxy.room.nodes.chatForm
 		textInput = $ @turntableProxy.room.nodes.chatText
@@ -133,7 +156,6 @@ class TurntableCli
 
 		# Add custom placeholder
 		$(textInput).attr "placeholder", "Enter a message or command"
-
 
 	handleInputSubmit: (event) =>
 		event.preventDefault()
@@ -166,17 +188,18 @@ class TurntableCli
 					if (key is 39 and target.selectionEnd is target.value.length) || key is 27
 						@turntableProxy.room.cancelNameSuggest()
 						return false
-		else
+		else if not suggestedCommand and not @turntableProxy.room.suggestedName
 			switch key
-				when 38
-					if not suggestedCommand and not @turntableProxy.room.suggestedName
+				when 38 # Arrow Up
 						@textHistoryNext()
-				when 40
-					if not suggestedCommand and not @turntableProxy.room.suggestedName
+				when 40 # Arrow Down
 						@textHistoryPrev()
-				when 27
-					if not suggestedCommand and not @turntableProxy.room.suggestedName
-						@clear()
+				when 27 # escape
+						@clear false
+				when 67 # C
+						if event.ctrlKey
+							isText = if textInput.val() is '' then false else true
+							@clear isText
 
 		return @turntableProxy.room.chatKeyDownListener event
 
@@ -248,10 +271,10 @@ class TurntableCli
 			currentHistoryIndex--;
 			$(textInput).val @textHistory[currentHistoryIndex - 1]
 
-	clear: ->
-		currentHistoryIndex = 0 if ($.trim $(textInput).val()) is ""
-		@addTextEntry $.trim $(textInput).val()
+	clear: (inHistory = true) ->
+		@addTextEntry $.trim $(textInput).val() if inHistory
 		$(textInput).val ''
+		currentHistoryIndex = 0
 
 	parseInputText: (text) ->
 		# return false to pass to Turntable
@@ -333,15 +356,30 @@ class TurntableCli
 				@turntableProxy.toggleMute()
 				@clear()
 				return true
-			when /^\/pm[ ]*/i.test text # Send Private Message
+			when /^\/pm[ ]*.+/i.test text # Send Private Message
 				name = text.split(" /")[0].split(' @')[1]
 
 				if @turntableProxy.getUserIdByName name
-					@turntableProxy.room.handlePM
-						senderid: @turntableProxy.getUserIdByName name
+					# Check if window exists
+					if window.turntable.buddyList.pmWindows[@turntableProxy.getUserIdByName name]? and not window.turntable.buddyList.pmWindows[@turntableProxy.getUserIdByName name].isClosed
+						window.turntable.buddyList.pmWindows[@turntableProxy.getUserIdByName name].open(true) if window.turntable.buddyList.pmWindows[@turntableProxy.getUserIdByName name].isMinimized
+					else
+						@turntableProxy.room.handlePM
+							senderid: @turntableProxy.getUserIdByName name
+
+					setTimeout (=>
+						window.turntable.buddyList.pmWindows[@turntableProxy.getUserIdByName name].open true),	500
 				else
 					@turntableProxy.appendActionMessage "User @#{name} doesn't appear to be in this room.", "PM: "
 
+				@clear()
+				return true
+			when /^\/quitdj[ ]*$/i.test text # Quit DJing
+				@turntableProxy.quitDjing()
+				@clear()
+				return true
+			when /^\/skip[ ]*$/i.test text # Skip your current song
+				@turntableProxy.skipSong()
 				@clear()
 				return true
 			when /^\/snag[ ]*$/i.test text # Snag a song to your queue

@@ -126,6 +126,33 @@
       }
     };
 
+    TurntableProxy.prototype.quitDjing = function() {
+      var message;
+      message = {
+        api: "room.rem_dj",
+        roomid: this.room.roomId
+      };
+      if (this.room.isDj()) {
+        this.sendSocketMessage(message);
+        return console.log("Removing DJ: You");
+      } else {
+        return this.appendActionMessage("You are not a DJ.", "QuitDJ: ");
+      }
+    };
+
+    TurntableProxy.prototype.skipSong = function() {
+      var message;
+      message = {
+        api: "room.stop_song",
+        roomid: this.room.roomId
+      };
+      if (this.room.currentDj === this.room.selfId) {
+        return this.sendSocketMessage(message);
+      } else {
+        return this.appendActionMessage("You are not the current DJ.", "Skip Song: ");
+      }
+    };
+
     TurntableProxy.prototype.awesomeSong = function() {
       return this.roomManager.callback("upvote");
     };
@@ -151,7 +178,7 @@
 
     suggestedCommand = false;
 
-    commands = ["/awesome", "/clear", "/lame", "/mute", "/pm", "/snag"];
+    commands = ["/awesome", "/clear", "/lame", "/mute", "/pm", "/quitdj", "/skip", "/snag"];
 
     modCommands = ["/boot", "/removedj"];
 
@@ -176,7 +203,7 @@
         setTimeout(this.init, 200);
         return;
       } else {
-        console.log("TurntableCli Initialized");
+        console.log("TurntableCLI Initialized");
       }
       textForm = $(this.turntableProxy.room.nodes.chatForm);
       textInput = $(this.turntableProxy.room.nodes.chatText);
@@ -205,7 +232,7 @@
     };
 
     TurntableCli.prototype.handleInputKeyDown = function(event) {
-      var key, next, previous, target;
+      var isText, key, next, previous, target;
       target = event.target;
       key = event.charCode || event.keyCode;
       if (suggestedCommand && textInput.val().match(/^\//)) {
@@ -233,21 +260,21 @@
               return false;
             }
         }
-      } else {
+      } else if (!suggestedCommand && !this.turntableProxy.room.suggestedName) {
         switch (key) {
           case 38:
-            if (!suggestedCommand && !this.turntableProxy.room.suggestedName) {
-              this.textHistoryNext();
-            }
+            this.textHistoryNext();
             break;
           case 40:
-            if (!suggestedCommand && !this.turntableProxy.room.suggestedName) {
-              this.textHistoryPrev();
-            }
+            this.textHistoryPrev();
             break;
           case 27:
-            if (!suggestedCommand && !this.turntableProxy.room.suggestedName) {
-              this.clear();
+            this.clear(false);
+            break;
+          case 67:
+            if (event.ctrlKey) {
+              isText = textInput.val() === '' ? false : true;
+              this.clear(isText);
             }
         }
       }
@@ -342,16 +369,20 @@
       }
     };
 
-    TurntableCli.prototype.clear = function() {
-      if (($.trim($(textInput).val())) === "") {
-        currentHistoryIndex = 0;
+    TurntableCli.prototype.clear = function(inHistory) {
+      if (inHistory == null) {
+        inHistory = true;
       }
-      this.addTextEntry($.trim($(textInput).val()));
-      return $(textInput).val('');
+      if (inHistory) {
+        this.addTextEntry($.trim($(textInput).val()));
+      }
+      $(textInput).val('');
+      return currentHistoryIndex = 0;
     };
 
     TurntableCli.prototype.parseInputText = function(text) {
-      var arg, args, isPositions, name, names, position, positions, prunedArgs, reason, username, users, _i, _j, _k, _l, _len, _len1, _len2, _len3;
+      var arg, args, isPositions, name, names, position, positions, prunedArgs, reason, username, users, _i, _j, _k, _l, _len, _len1, _len2, _len3,
+        _this = this;
       if (this.turntableProxy.room.isMod()) {
         switch (true) {
           case /^\/boot[ ]*/i.test(text):
@@ -430,15 +461,32 @@
           this.turntableProxy.toggleMute();
           this.clear();
           return true;
-        case /^\/pm[ ]*/i.test(text):
+        case /^\/pm[ ]*.+/i.test(text):
           name = text.split(" /")[0].split(' @')[1];
           if (this.turntableProxy.getUserIdByName(name)) {
-            this.turntableProxy.room.handlePM({
-              senderid: this.turntableProxy.getUserIdByName(name)
-            });
+            if ((window.turntable.buddyList.pmWindows[this.turntableProxy.getUserIdByName(name)] != null) && !window.turntable.buddyList.pmWindows[this.turntableProxy.getUserIdByName(name)].isClosed) {
+              if (window.turntable.buddyList.pmWindows[this.turntableProxy.getUserIdByName(name)].isMinimized) {
+                window.turntable.buddyList.pmWindows[this.turntableProxy.getUserIdByName(name)].open(true);
+              }
+            } else {
+              this.turntableProxy.room.handlePM({
+                senderid: this.turntableProxy.getUserIdByName(name)
+              });
+            }
+            setTimeout((function() {
+              return window.turntable.buddyList.pmWindows[_this.turntableProxy.getUserIdByName(name)].open(true);
+            }), 500);
           } else {
             this.turntableProxy.appendActionMessage("User @" + name + " doesn't appear to be in this room.", "PM: ");
           }
+          this.clear();
+          return true;
+        case /^\/quitdj[ ]*$/i.test(text):
+          this.turntableProxy.quitDjing();
+          this.clear();
+          return true;
+        case /^\/skip[ ]*$/i.test(text):
+          this.turntableProxy.skipSong();
           this.clear();
           return true;
         case /^\/snag[ ]*$/i.test(text):
