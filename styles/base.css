@@ -108,7 +108,7 @@
   left: -1px;
 }
 
-#menuh #izzmo-settings-menu-animations-icon {
+#menuh #tte-settings-menu-animations-icon {
   background-image: url(http://www.pinnacleofdestruction.net/tt/images/check.png);
   width: 16px;
   height: 16px;
@@ -181,8 +181,8 @@ div.modal ul > li li {
   font-weight: normal;
 }
 
-#overlay div.settingsOverlay .fields div > p,
-#overlay div.settingsOverlay .spots div > p {
+#overlay div.settingsOverlay .fields div p,
+#overlay div.settingsOverlay .spots div p {
   font-size: 12px;
 }
 
@@ -233,7 +233,8 @@ div#tteui-settings div.fields > div input,
 div#tteui-settings div.spots > div select,
 div#tteui-settings div.spots > div input {
   font-size:12px;
-  margin:0;
+  margin: 0px;
+  padding: 0px;
 }
 
 div#tteui-settings div.fields > div #tteChatKeywords {

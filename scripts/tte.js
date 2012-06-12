@@ -12,7 +12,7 @@
       spot_saving: false,
       spot_attempts: [],
       boot_msg: 'Please stop trying to get on deck, the spot is reserved!',
-      spot_users: [],
+      spot_users: []
     },
     settings: {
       boot_linkers: true
@@ -121,19 +121,16 @@
 
   window.tte.utils = {
     getNameByUserId: function(userId) {
-        return window.tte.ttObj.users[userId.toString()].name;
-      },
-
+      return window.tte.ttObj.users[userId.toString()].name;
+    },
     getUserIdByName: function(name) {
       var users = window.tte.ttObj.users;
       for(var i in users) {
-        if(users[i].name.toLowerCase() == $.trim(name.toLowerCase())) {
+        if(users[i].name.toLowerCase() == $.trim(name.toLowerCase()))
           return users[i].userid;
-        }
       }
       return 0;
     },
-
     isNumeric: function(vTestValue)
     {
       // put the TEST value into a string object variable
@@ -147,7 +144,7 @@
       for(var x=0; x < sField.length; x++) {
         // if the character is < 0 or > 9, return false (not a number)
         if((sField.charAt(x) >= '0' && sField.charAt(x) <= '9') || sField.charAt(x) == '.' || sField.charAt(x) == ',' || (sField.charAt(x) == '-' && x==0)) { /* do nothing */ }
-        else {return false;}
+        else { return false; }
       }
       
       // made it through the loop - we have a number
@@ -164,9 +161,11 @@
     },
     version: '2.2.0',
     newUpdatesMsg: '<ul>'
-                  +'<li>New Feature: Command Line Interface (CLI). Integrates a command-like feeling.</li>'
+                  +'<li>New Feature: Command Line Interface (CLI). Integrates a command-like feeling. (Try it out by typing \'/\' in the chat textbox to see a list of commands.</li>'
+                  +'<li>Bug Fix: When saving a spot and a moderator hops up on deck, it no longer let\'s them stay on deck and turns off spot saving, it instead kicks them off.</li>'
+                  +'<li>Bug Fix: Various CSS bugs fixed.</li>'
+                  +'<li>Bug Fix: Fixed bug causing popup not to show if you clicked on a person\'s name in chat.</li>'
                   +'</ul>',
-
     upvotes: 0,
     downvotes: 0,
     snags: 0,
@@ -583,7 +582,7 @@
       var i = this;
       $(b).find(".speaker").text(a).click(function (e) {
         if(window.tte.ui.settings.showChatAvatarTooltip)
-          window.tte.ttRoomObjs.toggle_listener(f);
+          window.tte.ttRoomObjs.toggle_tipsy(f);
         var l = Room.layouts.guestOptions(window.tte.ttObj.users[f], window.tte.ttObj);
         delete l[3];
         l[2].splice(4, 0, [
@@ -1008,8 +1007,8 @@
             ]
           ));
 
-          var spots = settings.find('div.spots:first').append('<div><span class="tteOptionLabel">Boot Room Linkers?</span> <input type="checkbox" id="tteBootRoomLinkers" value="1"' + ((window.tte.settings.boot_linkers) ? 'checked' : '') + '><p>If enabled, will automatically boot non-mods from the room for linking to other Turntable.fm rooms.</p></div>'
-          + '<div><span class="tteOptionLabel">Save Spots?</span> <input type="checkbox" id="tteSpotSaving" value="1"' + ((window.tte.spotSaving.spot_saving) ? 'checked' : '') + '><p>Spot saving allows you to moderate who gets up on stage. If enabled, any of the usernames you list below will be allowed on deck, and anyone else who tries to get up will be automatically booted off stage.</p></div>'
+          var spots = settings.find('div.spots:first').append('<div><label for="tteBootRoomLinkers"><span class="tteOptionLabel">Boot Room Linkers?</span> <input type="checkbox" id="tteBootRoomLinkers" value="1"' + ((window.tte.settings.boot_linkers) ? 'checked' : '') + '><p>If enabled, will automatically boot non-mods from the room for linking to other Turntable.fm rooms.</p></label></div>'
+          + '<div><label for="tteSpotSaving"><span class="tteOptionLabel">Save Spots?</span> <input type="checkbox" id="tteSpotSaving" value="1"' + ((window.tte.spotSaving.spot_saving) ? 'checked' : '') + '><p>Spot saving allows you to moderate who gets up on stage. If enabled, any of the usernames you list below will be allowed on deck, and anyone else who tries to get up will be automatically booted off stage.</p></label></div>'
           + '<div><span class="tteOptionLabel">Usernames:</span> <input type="text" id="tteSpotSavingUsers" /><p>Use commas to separate multiple names. Use two "@"s for names that start with them.</p></div>'
           + '<div><span class="tteOptionLabel">Boot Message:</span> <input type="text" id="tteSpotSavingBootMessage" /></div>');
 
@@ -1294,8 +1293,8 @@
         ]
       ));
       var fields = settings.find('div.fields:first');
-      fields.append('<div><span class="tteOptionLabel">Desktop Notifications</span> <input type="radio" name="tteNotifications" class="tteNotifications" value="0" ' + ((window.tte.ui.settings.notifications) ? '' : 'checked') + '> No / <input type="radio" name="tteNotifications" class="tteNotifications" value="1" ' + ((window.tte.ui.settings.notifications) ? 'checked' : '') + '> Yes</div>');
-      fields.append('<div><span class="tteOptionLabel">Avatar Tooltip</span><input type="radio" name="tteAvatarToolTip" class="tteAvatarToolTip" value="0" ' + ((window.tte.ui.settings.showChatAvatarTooltip) ? '' : 'checked') + '> No / <input type="radio" name="tteAvatarToolTip" class="tteAvatarToolTip" value="1" ' + ((window.tte.ui.settings.showChatAvatarTooltip) ? 'checked' : '') + '> Yes<p>Will show a bubble over the users avatar in the crowd if you click on their username in the chat window (if animations are on).</p></div>');
+      fields.append('<div><span class="tteOptionLabel">Desktop Notifications</span> <label for="tteNotificationsNo"><input type="radio" name="tteNotifications" id="tteNotificationsNo" class="tteNotifications" value="0" ' + ((window.tte.ui.settings.notifications) ? '' : 'checked') + '> No / <label for="tteNotificationsYes"><input type="radio" name="tteNotifications" class="tteNotifications" id="tteNotificationsYes" value="1" ' + ((window.tte.ui.settings.notifications) ? 'checked' : '') + '> Yes</div>');
+      fields.append('<div><span class="tteOptionLabel">Avatar Tooltip</span> <label for="tteAvatarToolTipNo"><input type="radio" name="tteAvatarToolTip" id="tteAvatarToolTipNo" class="tteAvatarToolTip" value="0" ' + ((window.tte.ui.settings.showChatAvatarTooltip) ? '' : 'checked') + '> No / <label for="tteAvatarToolTipYes"><input type="radio" name="tteAvatarToolTip" class="tteAvatarToolTip" id="tteAvatarToolTipYes" value="1" ' + ((window.tte.ui.settings.showChatAvatarTooltip) ? 'checked' : '') + '> Yes<p>Will show a bubble over the users avatar in the crowd if you click on their username in the chat window (if animations are on).</p></div>');
       fields.append('<div><span class="tteOptionLabel">Display</span><select name="tteUiStyle" id="tteUiStyle"><option value="-1" ' + ((window.tte.ui.settings.displayType != -1) ? '' : 'selected') + '>Default</option><option value="0" ' + ((window.tte.ui.settings.displayType != 0) ? '' : 'selected') + '>3 Columns</option><option value="1" ' + ((window.tte.ui.settings.displayType != 1) ? '' : 'selected') + '>2 Columns - Queue/Guest Stacked</option><option value="2" ' + ((window.tte.ui.settings.displayType != 2) ? '' : 'selected') + '>2 Columns - Queue/Chat Stacked</option></select></div>');
       fields.append('<div><span class="tteOptionLabel">Notification Keywords:</span><input type="text" id="tteChatKeywords"/><p>If you would like to receive notifications for keywords other than your own username, you can enter them here -- comma delimited.</p></div>');
       
