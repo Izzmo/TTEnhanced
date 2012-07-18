@@ -1,7 +1,7 @@
 {
   "name": "TTEnhanced",
   "update_url": "http://izzmo.com/tt/interface/update.xml",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "An extension for Turntable.fm which widens the operating area and also adds a lot of extra 'bonus' features.",
   "browser_action": {
     "default_icon": "icon.png",

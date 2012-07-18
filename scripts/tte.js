@@ -159,12 +159,9 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '2.2.0',
+    version: '2.2.1',
     newUpdatesMsg: '<ul>'
-                  +'<li>New Feature: Command Line Interface (CLI). Integrates a command-like feeling. (Try it out by typing \'/\' in the chat textbox to see a list of commands.</li>'
-                  +'<li>Bug Fix: When saving a spot and a moderator hops up on deck, it no longer let\'s them stay on deck and turns off spot saving, it instead kicks them off.</li>'
-                  +'<li>Bug Fix: Various CSS bugs fixed.</li>'
-                  +'<li>Bug Fix: Fixed bug causing popup not to show if you clicked on a person\'s name in chat.</li>'
+                  +'<li>Bug Fix: Turntable Enhanced would not load. Turntable.fm updated the way they handle avatars and bopping, so unfortunately, the "Hide Animations" feature does not work right now. We are working hard to bring this feature back.</li>'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
@@ -1183,7 +1180,7 @@
     }
 
     // override set_dj_points
-    window.tte.ttRoomObjs.set_dj_points = window.tte.ui.override_set_dj_points;
+    //window.tte.ttRoomObjs.set_dj_points = window.tte.ui.override_set_dj_points;
     
     turntable.addEventListener("message", window.tte.ui.listener);
     
@@ -1196,13 +1193,14 @@
     window.tte.ttObj.appendChatMessage = window.tte.ui.appendChatMessage;
     
     // add animations button to menu
-    $('#tte-settings-menu-animations-icon').parent().remove();
+    /*$('#tte-settings-menu-animations-icon').parent().remove();
     $('#menuh').find('div.menuItem').last().before('<div class="menuItem"><div class="settingsHead" id="tte-settings-menu-animations-icon" /><div class="text">Animations</div></div>');
     $('#tte-settings-menu-animations-icon')
     .parent()
     .bind('click', function() {
       window.tte.ui.toggleAnimations(this);
     });
+    */
     
     // add moderation button to menu
     window.tte.ui.addModTools();
