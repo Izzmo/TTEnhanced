@@ -6,6 +6,8 @@ TTEnhanced
 
 TTEnhanced is currently only available for the Chrome Web Browser, although plans for getting it on Firefox are coming soon.
 
+`TTEnhanced` has been updated to fix the non-loading bug!
+
 Installation
 ------------
 
