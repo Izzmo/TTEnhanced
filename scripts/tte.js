@@ -159,9 +159,10 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '2.2.1',
+    version: '2.2.2',
     newUpdatesMsg: '<ul>'
-                  +'<li>Bug Fix: Turntable Enhanced would not load. Turntable.fm updated the way they handle avatars and bopping, so unfortunately, the "Hide Animations" feature does not work right now. We are working hard to bring this feature back.</li>'
+                  +'<li>Bug Fix: Disable Animations are back.</li>'
+                  +'<li>Bug Fix: CLI Tools are back.</li>'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
@@ -1101,7 +1102,7 @@
       }
     }
     for(var prop in window.tte.ttObj) {
-      if(window.tte.ttObj[prop] != undefined && window.tte.ttObj[prop].hasOwnProperty('div'))
+      if(window.tte.ttObj[prop] != undefined && window.tte.ttObj[prop].hasOwnProperty('$div'))
         window.tte.ttRoomObjs = window.tte.ttObj[prop];
     }
     
@@ -1180,7 +1181,7 @@
     }
 
     // override set_dj_points
-    //window.tte.ttRoomObjs.set_dj_points = window.tte.ui.override_set_dj_points;
+    window.tte.ttRoomObjs.set_dj_points = window.tte.ui.override_set_dj_points;
     
     turntable.addEventListener("message", window.tte.ui.listener);
     
@@ -1193,14 +1194,13 @@
     window.tte.ttObj.appendChatMessage = window.tte.ui.appendChatMessage;
     
     // add animations button to menu
-    /*$('#tte-settings-menu-animations-icon').parent().remove();
+    $('#tte-settings-menu-animations-icon').parent().remove();
     $('#menuh').find('div.menuItem').last().before('<div class="menuItem"><div class="settingsHead" id="tte-settings-menu-animations-icon" /><div class="text">Animations</div></div>');
     $('#tte-settings-menu-animations-icon')
     .parent()
     .bind('click', function() {
       window.tte.ui.toggleAnimations(this);
     });
-    */
     
     // add moderation button to menu
     window.tte.ui.addModTools();
