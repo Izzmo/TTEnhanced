@@ -624,6 +624,9 @@
         $('body').append(c);
       });
       
+      // bug in turntable.fm where it will randomly clear all users from the room and will cause this method to error out
+      if(!(window.turntable.user.id in window.tte.ttObj.users)) return;
+      
       var list = window.tte.ttObj.users[window.tte.ttObj.selfId].name,
           c = $(b).find(".text");
       $.each(window.tte.ui.settings.notifierKeywords, function(i, v) {
