@@ -159,10 +159,9 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '2.2.2',
+    version: '2.2.3',
     newUpdatesMsg: '<ul>'
-                  +'<li>Bug Fix: Disable Animations are back.</li>'
-                  +'<li>Bug Fix: CLI Tools are back.</li>'
+                  +'<li>Bug Fix: Fixed loading issues.</li>'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
