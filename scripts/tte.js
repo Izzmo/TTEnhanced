@@ -1105,7 +1105,7 @@
       }
     }
     for(var prop in window.tte.ttObj) {
-      if(window.tte.ttObj[prop] != undefined && window.tte.ttObj[prop].hasOwnProperty('$div'))
+      if(window.tte.ttObj[prop] != undefined && window.tte.ttObj[prop].hasOwnProperty('set_dj_points'))
         window.tte.ttRoomObjs = window.tte.ttObj[prop];
     }
     
