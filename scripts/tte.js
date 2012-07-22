@@ -252,10 +252,9 @@
             if(v != undefined && v.length > 0)
               list += '|' + v;
           });
-          if(d.text.search(new RegExp(list, 'i')) >= 0) {
+          if(d.text.search(new RegExp(list, 'i')) >= 0)
             window.tte.ui.sendNotification('Chat Notification', d.name + ': ' + d.text);
-          }
-          if(window.tte.settings.boot_linkers && d.text.search(/https?:\/\/(www.)?(((tt|turntable)\.fm)|(plug\.dj))(\/[a-zA-Z0-9\-\_]*)*\/?/ig) >= 0 && window.tte.ttObj.isMod() && !window.tte.ttObj.isMod(d.userid)) {
+          if(window.tte.settings.boot_linkers && d.text.search(/(((tt|turntable)\.fm)|(plug\.dj))(\/[a-zA-Z0-9\-\_]*)*\/?/ig) >= 0 && window.tte.ttObj.isMod() && !window.tte.ttObj.isMod(d.userid)) {
             window.tte.socket({
               api: 'room.boot_user',
               roomid: TURNTABLE_ROOMID,
