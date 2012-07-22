@@ -114,51 +114,51 @@
   height: 16px;
 }
 
-#izzui-settings div.fields > div {
+#tteui-settings div.fields > div {
   padding: 5px;
 }
 
-#izzui-settings div.fields div span,
-#izzui-settings div.spots div span {
+#tteui-settings div.fields div span,
+#tteui-settings div.spots div span {
   float: left;
 }
 
-#izzui-settings div.fields div div {
+#tteui-settings div.fields div div {
   padding-right: 40px;
   text-align: right;
 }
 
-#izzui-settings div.fields div div input:last-child {
+#tteui-settings div.fields div div input:last-child {
   margin-left: 15px;
 }
 
-#izzui-settings div.spots div {
+#tteui-settings div.spots div {
   margin-top: 10px;
 }
 
-#izzui-settings #djs {
+#tteui-settings #djs {
   padding-top: 10px;
 }
 
-#izzui-settings div.spots p {
+#tteui-settings div.spots p {
   font-size: 13px;
   text-align: left;
   padding: 5px 0;
 }
 
-#izzui-settings div.spots #user {
+#tteui-settings div.spots #user {
   width: 200px;
 }
 
-#izzui-settings div.save-changes {
+#tteui-settings div.save-changes {
   margin-top: 20px;
 }
 
-#izzui-settings #djs {
+#tteui-settings #djs {
   list-style: none;
 }
 
-#izzui-settings #djs span {
+#tteui-settings #djs span {
   float: none;
 }
 
@@ -250,4 +250,13 @@ div#tteui-settings div.spots > div #tteSpotSavingUsers {
 div#tteui-settings div.spots > div #tteSpotSavingBootMessage {
   padding: 2px 6px;
   width: 314px;
+}
+
+#tte-logo {
+  font-weight: bold;
+  font-size: 10px;
+  color: gold;
+  padding-top: 46px;
+  padding-left: 131px;
+  text-shadow: 1px 1px 1px black;
 }

@@ -1162,8 +1162,8 @@
         height = $room.height(),
         width = $room.width();
 
-    // Set UI Title
-    $('.playlist-container:first div.header-text:first').html('Turntable Enhanced');
+    // Add TTEnhanced under TT Logo
+    $('#top-panel div.header').append($('<div id="tte-logo">Enhanced</div>'));
     
     // rewrite guest list update function
     window.tte.ttObj.__updateGuestList = window.tte.ttObj.updateGuestList;
