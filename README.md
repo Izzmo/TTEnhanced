@@ -13,4 +13,4 @@ Installation
 
 To install the extension onto your browser, click the link below and follow the browser's instructions.
 
-* [TTEnhanced.crx](http://izzmo.com/tt/interface/TTEnhanced.crx)
+* [TTEnhanced.crx](https://github.com/downloads/Izzmo/TTEnhanced/TTEnhanced-2.2.3.crx)
