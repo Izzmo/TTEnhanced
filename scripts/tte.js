@@ -159,9 +159,11 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '2.2.3',
+    version: '2.3.0',
     newUpdatesMsg: '<ul>'
-                  +'<li>Bug Fix: Fixed loading issues.</li>'
+                  +'<li>Bug Fix: Room linking no longer requires the \'http://www\' in it to be considering a room link.</li>'
+                  +'<li>Enhancement: You can now turn off/on the command-line interface in the settings.</li>'
+                  +'<li>Enhancement: \'Enhanced\' was added under the logo instead of replacing the \'My DJ Queue\' text.</li>'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
