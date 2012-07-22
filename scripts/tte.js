@@ -1166,7 +1166,7 @@
         width = $room.width();
 
     // Add TTEnhanced under TT Logo
-    $('#top-panel div.header').append($('<div id="tte-logo">Enhanced</div>'));
+    $('#top-panel div.header').find('#tte-logo').remove().end().append($('<div id="tte-logo">Enhanced</div>'));
     
     // rewrite guest list update function
     window.tte.ttObj.__updateGuestList = window.tte.ttObj.updateGuestList;
