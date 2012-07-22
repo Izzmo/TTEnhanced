@@ -1304,6 +1304,13 @@
       util.showOverlay(settings);
     });
     
+    // Auto-Focus on Type
+    $('body').on('keypress', function(e) {
+      if(e.charCode >= 32 && e.charCode <= 127 && !$('form.input-box input').is(':focus')) {
+        $('form.input-box input').focus();
+      }
+    });
+    
     // get settings from extension
     window.tte.eventManager.queue({api: 'settings', code: 'get'}, function(response) {
       // check if want notifications
