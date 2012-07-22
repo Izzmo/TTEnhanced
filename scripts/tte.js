@@ -164,6 +164,7 @@
                   +'<li>Bug Fix: Room linking no longer requires the \'http://www\' in it to be considering a room link.</li>'
                   +'<li>Enhancement: You can now turn off/on the command-line interface in the settings.</li>'
                   +'<li>Enhancement: \'Enhanced\' was added under the logo instead of replacing the \'My DJ Queue\' text.</li>'
+                  +'<li>Enhancement: If you start typing, TTE will automatically focus the chat box for you.</li>'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
@@ -1296,13 +1297,10 @@
       var fields = settings.find('div.fields:first');
       fields.append('<div><span class="tteOptionLabel">Desktop Notifications</span> <label for="tteNotificationsNo"><input type="radio" name="tteNotifications" id="tteNotificationsNo" class="tteNotifications" value="0" ' + ((window.tte.ui.settings.notifications) ? '' : 'checked') + '> No / <label for="tteNotificationsYes"><input type="radio" name="tteNotifications" class="tteNotifications" id="tteNotificationsYes" value="1" ' + ((window.tte.ui.settings.notifications) ? 'checked' : '') + '> Yes</div>');
       fields.append('<div><span class="tteOptionLabel">Avatar Tooltip</span> <label for="tteAvatarToolTipNo"><input type="radio" name="tteAvatarToolTip" id="tteAvatarToolTipNo" class="tteAvatarToolTip" value="0" ' + ((window.tte.ui.settings.showChatAvatarTooltip) ? '' : 'checked') + '> No / <label for="tteAvatarToolTipYes"><input type="radio" name="tteAvatarToolTip" class="tteAvatarToolTip" id="tteAvatarToolTipYes" value="1" ' + ((window.tte.ui.settings.showChatAvatarTooltip) ? 'checked' : '') + '> Yes<p>Will show a bubble over the users avatar in the crowd if you click on their username in the chat window (if animations are on).</p></div>');
+      fields.append('<div><span class="tteOptionLabel">Command-Line Interface</span> <label for="tteCLINo"><input type="radio" name="tteCLI" id="tteCLINo" class="tteCLI" value="0" ' + ((window.tte.ui.settings.showChatAvatarTooltip) ? '' : 'checked') + '> No / <label for="tteCLIYes"><input type="radio" name="tteCLI" class="tteCLI" id="tteCLIYes" value="1" ' + ((window.tte.ui.settings.showChatAvatarTooltip) ? 'checked' : '') + '> Yes<p>Allows you to type slash commands into the chat box such as /awesome, /lame, etc.</p></div>');
       fields.append('<div><span class="tteOptionLabel">Display</span><select name="tteUiStyle" id="tteUiStyle"><option value="-1" ' + ((window.tte.ui.settings.displayType != -1) ? '' : 'selected') + '>Default</option><option value="0" ' + ((window.tte.ui.settings.displayType != 0) ? '' : 'selected') + '>3 Columns</option><option value="1" ' + ((window.tte.ui.settings.displayType != 1) ? '' : 'selected') + '>2 Columns - Queue/Guest Stacked</option><option value="2" ' + ((window.tte.ui.settings.displayType != 2) ? '' : 'selected') + '>2 Columns - Queue/Chat Stacked</option></select></div>');
       fields.append('<div><span class="tteOptionLabel">Notification Keywords:</span><input type="text" id="tteChatKeywords"/><p>If you would like to receive notifications for keywords other than your own username, you can enter them here -- comma delimited.</p></div>');
-      
-      settings.ready(function(){
-        setTimeout("$('#tteChatKeywords').val(window.tte.ui.settings.notifierKeywords.join(','))",500);
-      });
-      
+      fields.find('#tteChatKeywords').val(window.tte.ui.settings.notifierKeywords.join(','));
       util.showOverlay(settings);
     });
     
