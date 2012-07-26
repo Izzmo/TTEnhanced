@@ -260,3 +260,7 @@ div#tteui-settings div.spots > div #tteSpotSavingBootMessage {
   padding-left: 131px;
   text-shadow: 1px 1px 1px black;
 }
+
+#overlay h1.tte-updated {
+  padding-left: 60px;
+}

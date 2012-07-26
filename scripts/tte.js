@@ -171,6 +171,9 @@
                   +'<li>Bug Fix: You can now press enter to send a slash command such as /boo instead of /boot.</li>'
                   +'<li>Enhancement: You can now turn off the command-line interface (CLI) auto-completion.</li>'
                   +'<li>Enhancement: If someone changes their avatar, it now immediately updates the guest list instead of after a song change.'
+                  +'<li>Enhancement: You can now look-up someone on ttStats by clicking on their name in chat, the guest list or your buddy list.'
+                  +'<li>Bug Fix: If a fan drops from deck, their heart next to their name in the guest list will now appear.'
+                  +'<li>Bug Fix: New Updates dialog header now shows correctly.'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
@@ -490,6 +493,7 @@
       }
       else
         type = 'user';
+      
       $('#' + user.userid).remove();
       
       $s = $('#desc-' + type);
@@ -530,7 +534,7 @@
       
       return  $('<div class="guest ' + type + ' ' + vote + ' ' + ((user.fanof && type == user) ? 'fan' : '') + '" id="' + user.userid + '">'
             + '<div class="guestAvatar"><img src="https://s3.amazonaws.com/static.turntable.fm/roommanager_assets/avatars/' + user.avatarid + '/scaled/55/headfront.png" height="20" alt="" /></div>'
-            + '<div class="icons">' + icons + ((user.fanof) ? '<img src="http://www.pinnacleofdestruction.net/tt/images/heart_small.png" alt="Fan" />' : '') + '</div>'
+            + '<div class="icons">' + icons + ((window.tte.ttObj.users[user.userid].fanof) ? '<img src="http://www.pinnacleofdestruction.net/tt/images/heart_small.png" alt="Fan" />' : '') + '</div>'
             + '<div class="idletime"></div>'
             + '<div class="guestName">' + user.name + '</div>'
             + '</div>')
@@ -1430,7 +1434,7 @@
         var html = $(util.buildTree(
           ["div.modal", {},
             ["div.close-x", {event: {click: util.hideOverlay}}],
-            ["h1", "New Version " + window.tte.ui.version + "!"],
+            ["h1.tte-updated", "New Version " + window.tte.ui.version + "!"],
             ["br"],
             ["div.field", {}, ''],
             ["div.ok-button.centered-button", {event: {click: util.hideOverlay}} ]
