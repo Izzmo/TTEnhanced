@@ -165,6 +165,12 @@
                   +'<li>Enhancement: You can now turn off/on the command-line interface in the settings.</li>'
                   +'<li>Enhancement: \'Enhanced\' was added under the logo instead of replacing the \'My DJ Queue\' text.</li>'
                   +'<li>Enhancement: If you start typing, TTE will automatically focus the chat box for you.</li>'
+                  +'<li>Enhancement: The \'Remove DJ\' option when clicking on a DJ in the user list now shows at the end of options.</li>'
+                  +'<li>Bug Fix: If you are made a moderator, you no longer have to refresh the page to see the room moderation tools.</li>'
+                  +'<li>Bug Fix: If you mod/unmod/fan/unfan someone, the guest list now immediately updates.</li>'
+                  +'<li>Bug Fix: You can now press enter to send a slash command such as /boo instead of /boot.</li>'
+                  +'<li>Enhancement: You can now turn off the command-line interface (CLI) auto-completion.</li>'
+                  +'<li>Enhancement: If someone changes their avatar, it now immediately updates the guest list instead of after a song change.'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
@@ -337,12 +343,16 @@
           break;
           
         case 'update_user':
-          if(d.fans === undefined) return;
-            
-          // Don't want to reload the guest list for every single time someone unfans or fans someone in the room. So check and see what user it is.. if we are to fan or unfan them based on if they have a heart image or not (no other way to reliably tell without attaching an event handler to every button that has a "Become a Fan" on it.
-          var $g = $('div.guests #' + d.userid + ' div.icons img[alt="Fan"]');
-          if(($g.length && d.fans == -1) || (!$g.length && d.fans == 1))
-            window.tte.ui.guestList();
+          if(d.fans !== undefined) {
+            // Don't want to reload the guest list for every single time someone unfans or fans someone in the room. So check and see what user it is.. if we are to fan or unfan them based on if they have a heart image or not (no other way to reliably tell without attaching an event handler to every button that has a "Become a Fan" on it.
+            var $g = $('div.guests #' + d.userid + ' div.icons img[alt="Fan"]');
+            if(($g.length && d.fans == -1) || (!$g.length && d.fans == 1))
+              window.tte.ui.guestList();
+          }
+          if(d.avatarid !== undefined) {
+            var $img = $('div.guests #' + d.userid + ' div.guestAvatar img');
+            $img.attr('src', $img.attr('src').replace(/\/avatars\/[0-9]{1,4}\//, '/avatars/' + d.avatarid + '/'));
+          }
           break;
       }
     },
@@ -527,7 +537,12 @@
             .bind('click', function() {
               var $this = $(this),
                   l = Room.layouts.guestOptions(window.tte.ttObj.users[$this.attr('id')], window.tte.ttObj);
-              delete l[3];
+              
+              delete l[3]; // remove the arrow from showing
+              
+              // remove "Remove DJ" to end of the list
+              var rdj = l[2].splice(5, 1);
+              
               l[2].push([
                 'a.guestOption',
                 {
@@ -560,7 +575,8 @@
                   href: '#'
                 },
                 'Set Note'
-              ]);
+              ], rdj[0]);
+              
               var c = $(util.buildTree(l)).css({
                 top: $this.offset().top + 'px',
                 left: $this.offset().left + 'px',
