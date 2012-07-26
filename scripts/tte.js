@@ -540,9 +540,6 @@
               
               delete l[3]; // remove the arrow from showing
               
-              // remove "Remove DJ" to end of the list
-              var rdj = l[2].splice(5, 1);
-              
               l[2].push([
                 'a.guestOption',
                 {
@@ -575,7 +572,23 @@
                   href: '#'
                 },
                 'Set Note'
-              ], rdj[0]);
+              ],
+              ['a.guestOption',
+                {
+                  event: {click: function() {
+                    window.open('http://ttstats.info/user/' + $this.attr('id'), '_newtab');
+                    $(this).parent().remove();
+                  }},
+                  href: '#'
+                },
+                'Look-up on ttStats'
+              ]);
+              
+              if(window.tte.ttObj.isDj($this.attr('id'))) {
+                // remove "Remove DJ" to end of the list
+                var rdj = l[2].splice(5, 1);
+                l[2].push(rdj[0]);
+              }
               
               var c = $(util.buildTree(l)).css({
                 top: $this.offset().top + 'px',
@@ -608,7 +621,9 @@
         if(window.tte.ui.settings.showChatAvatarTooltip)
           window.tte.ttRoomObjs.toggle_tipsy(f);
         var l = Room.layouts.guestOptions(window.tte.ttObj.users[f], window.tte.ttObj);
-        delete l[3];
+        
+        delete l[3]; // remove arrow
+              
         l[2].splice(4, 0, [
           'a.guestOption',
           {
@@ -644,6 +659,25 @@
           },
           'Set Note'
         ]);
+        
+        // add ttStats look-up option
+        l[2].splice(3, 0, ['a.guestOption',
+          {
+            event: {click: function() {
+              window.open('http://ttstats.info/user/' + f, '_newtab');
+              $(this).parent().remove();
+            }},
+            href: '#'
+          },
+          'Look-up on ttStats'
+        ]);
+        
+        if(window.tte.ttObj.isDj(f)) {
+          // remove "Remove DJ" to end of the list
+          var rdj = l[2].splice(7, 1);
+          l[2].push(rdj[0]);
+        }
+              
         var c = $(util.buildTree(l)).css({
           top: $(this).offset().top + 'px',
           left: $(this).offset().left + 'px',
@@ -742,44 +776,53 @@
             delete l[2][i];
         });
         // add Go To Room item
-        l[2].splice(4, 0, ["a#" + d.userid + ".guestOption", {event: {'click': function() {
-          turntable.setPage(d.roomShortcut, d.roomId);
-          $('div.guestOptionsContainer').remove();
-          turntable.buddyList.toggle();
-        }}, href: '#'}, "Go To Room"]);
-        l[2].splice(4, 0, [
-          'a.guestOption',
-          {
-            event: {click: function() {
-              window.tte.eventManager.queue({api: 'getNote', userid: d.userid}, function(response) {
-                var $html = $(util.buildTree(
-                  ["div.modal", {},
-                    ["div.close-x", {event: {click: util.hideOverlay}}],
-                    ["h1", "Set User Note"],
-                    ["br"],
-                    ["div", {}, "Enter any information you would like about this user below."],
-                    ["br"],
-                    ["textarea#userNoteField.textarea", {maxlength: 400} ],
-                    ["br"], ["br"],
-                    ["div.ok-button.centered-button", {event: {click: function() {
-                            var val = $('#userNoteField').val();
-                            window.tte.eventManager.queue({api: 'setNote', userid: d.userid, note: val});
-                            util.hideOverlay();
+        l[2].splice(4, 0, ['a.guestOption',
+            {
+              event: {click: function() {
+                window.open('http://ttstats.info/user/' + d.userid, '_newtab');
+                $(this).parent().remove();
+              }},
+              href: '#'
+            },
+            'Look-up on ttStats'
+          ],
+          ["a#" + d.userid + ".guestOption", {event: {'click': function() {
+            turntable.setPage(d.roomShortcut, d.roomId);
+            $('div.guestOptionsContainer').remove();
+            turntable.buddyList.toggle();
+          }}, href: '#'}, "Go To Room"],
+          ['a.guestOption',
+            {
+              event: {click: function() {
+                window.tte.eventManager.queue({api: 'getNote', userid: d.userid}, function(response) {
+                  var $html = $(util.buildTree(
+                    ["div.modal", {},
+                      ["div.close-x", {event: {click: util.hideOverlay}}],
+                      ["h1", "Set User Note"],
+                      ["br"],
+                      ["div", {}, "Enter any information you would like about this user below."],
+                      ["br"],
+                      ["textarea#userNoteField.textarea", {maxlength: 400} ],
+                      ["br"], ["br"],
+                      ["div.ok-button.centered-button", {event: {click: function() {
+                              var val = $('#userNoteField').val();
+                              window.tte.eventManager.queue({api: 'setNote', userid: d.userid, note: val});
+                              util.hideOverlay();
+                            }
                           }
                         }
-                      }
+                      ]
                     ]
-                  ]
-                ));
-                $html.find('#userNoteField').val(response.note);
-                util.showOverlay($html);
-              });
-              $('div.guestOptionsContainer').remove();
-            }},
-            href: '#'
-          },
-          'Set Note'
-        ]);
+                  ));
+                  $html.find('#userNoteField').val(response.note);
+                  util.showOverlay($html);
+                });
+                $('div.guestOptionsContainer').remove();
+              }},
+              href: '#'
+            },
+            'Set Note'
+          ]);
         
         // add favorite item
         if($.inArray(d.userid, window.tte.ui.settings.favorites) >= 0) {
