@@ -325,15 +325,13 @@
           break;
           
         case 'new_moderator':
-          if (d.userid == window.turntable.user.id) {
-            
-          }
+          if (d.userid == window.turntable.user.id)
+            window.tte.ui.addModTools();
           break;
           
         case 'rem_moderator':
-          if (d.userid == window.turntable.user.id) {
-            
-          }
+          if (d.userid == window.turntable.user.id)
+            window.tte.ui.remModTools();
           break;
       }
     },
@@ -977,8 +975,11 @@
       a.selectionEnd = c.length;
       window.tte.ttObj.cancelNameSuggest();
     },
-    addModTools: function() {
+    remModTools: function() {
       $('#tte-settings-menu-moderation').remove();
+    },
+    addModTools: function() {
+      window.tte.ui.remModTools();
       if(window.tte.ttObj.isMod()) {
         $('#menuh').find('div.menuItem').last().before('<div id="tte-settings-menu-moderation" class="menuItem">Room Moderation</div>');
         $('#tte-settings-menu-moderation').bind('click', function() {
