@@ -325,13 +325,24 @@
           break;
           
         case 'new_moderator':
+          window.tte.ui.guestList();
           if (d.userid == window.turntable.user.id)
             window.tte.ui.addModTools();
           break;
           
         case 'rem_moderator':
+          window.tte.ui.guestList();
           if (d.userid == window.turntable.user.id)
             window.tte.ui.remModTools();
+          break;
+          
+        case 'update_user':
+          if(d.fans === undefined) return;
+            
+          // Don't want to reload the guest list for every single time someone unfans or fans someone in the room. So check and see what user it is.. if we are to fan or unfan them based on if they have a heart image or not (no other way to reliably tell without attaching an event handler to every button that has a "Become a Fan" on it.
+          var $g = $('div.guests #' + d.userid + ' div.icons img[alt="Fan"]');
+          if(($g.length && d.fans == -1) || (!$g.length && d.fans == 1))
+            window.tte.ui.guestList();
           break;
       }
     },
@@ -585,18 +596,20 @@
         l[2].splice(4, 0, [
           'a.guestOption',
           {
-            event: {click: function() {
-              window.tte.eventManager.queue({api: 'getNote', userid: f}, function(response) {
+            event: { click: function() {
+              window.tte.eventManager.queue({ api: 'getNote', userid: f }, function(response) {
                 var $html = $(util.buildTree(
                   ["div.modal", {},
-                    ["div.close-x", {event: {click: util.hideOverlay}}],
+                    ["div.close-x", { event: { click: util.hideOverlay } } ],
                     ["h1", "Set User Note"],
                     ["br"],
                     ["div", {}, "Enter any information you would like about this user below."],
                     ["br"],
                     ["textarea#userNoteField.textarea", {maxlength: 400} ],
                     ["br"], ["br"],
-                    ["div.ok-button.centered-button", {event: {click: function() {
+                    ["div.ok-button.centered-button", {
+                        event: {
+                          click: function() {
                             var val = $('#userNoteField').val();
                             window.tte.eventManager.queue({api: 'setNote', userid: f, note: val});
                             util.hideOverlay();
@@ -637,21 +650,18 @@
       
       h = util.stripComboDiacritics(h);
       if (h.length > 446) {
-          c.attr("title", h.substr(0, 2) == ": " ? h.substr(2) : h);
-          h = h.substr(0, 440) + "...";
+        c.attr("title", h.substr(0, 2) == ": " ? h.substr(2) : h);
+        h = h.substr(0, 440) + "...";
       }
       c.html(util.messageFilter(h));
-      if (j) {
-          $(b).addClass(j);
-      }
+      if (j)
+        $(b).addClass(j);
       $(e).append(b);
-      if (g) {
-          e.scrollTop += 9001;
-      }
+      if (g)
+        e.scrollTop += 9001;
       var d = $(e).find(".message");
-      if (d.length > 500) {
-          d.slice(0, 2).remove();
-      }
+      if (d.length > 500)
+        d.slice(0, 2).remove();
     },
     updateSongCount: function() {
       var count = 0;
