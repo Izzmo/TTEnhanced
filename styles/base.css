@@ -87,6 +87,17 @@
   top: auto;
 }
 
+.guest-list-container .guest.tte-joined {
+  border-left: 3px solid gold;
+}
+
+.guest-list-container .guest.left {
+  opacity: 0.5;
+  font-weight: bold;
+  color: grey;
+  font-style: italic;
+}
+
 
 
 #top-panel .votes {

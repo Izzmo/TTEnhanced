@@ -244,19 +244,28 @@
           
         case 'registered':
           window.tte.ui.guestListAddUser(d.user[0]);
+          $('#' + d.user[0].userid).addClass('tte-joined');
+          setTimeout(function() { var userid = d.user[0].userid; if(!$('#' + userid).hasClass('tte-joined')) return; $('#' + userid).removeClass('tte-joined'); }, 5000);
           $("span#totalUsers").text(window.tte.ui.numUsers());
           window.tte.timers.push({userid: d.user[0].userid, time: new Date().getTime()});
           break;
           
         case 'deregistered':
-          window.tte.ui.guestListRemoveUser(d.user[0].userid);
-          $("span#totalUsers").text(window.tte.ui.numUsers());
-          for(var prop in window.tte.timers) {
-            if(window.tte.timers[prop].userid == d.user[0].userid) {
-              delete window.tte.timers[prop];
-              break;
+          $('#' + d.user[0].userid).addClass('left');
+          setTimeout(function() {
+            var userid = d.user[0].userid;
+            
+            if(!$('#' + userid).hasClass('left')) return;
+            
+            window.tte.ui.guestListRemoveUser(userid);
+            $("span#totalUsers").text(window.tte.ui.numUsers());
+            for(var prop in window.tte.timers) {
+              if(window.tte.timers[prop].userid == userid) {
+                delete window.tte.timers[prop];
+                break;
+              }
             }
-          }
+          }, 5000);
           break;
           
         case 'pmmed':
