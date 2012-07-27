@@ -2,7 +2,7 @@ TTEnhanced
 ==========
 
 `TTEnhanced` is a Turntable.fm Chrome extension used for giving the website a bit of a face-lift. It adds cosmetic changes to the website, room moderation, drop down lists for easier usability, and much more.
-![Extension Screenshot](http://i.imgur.com/Mo6s8.png)
+![Extension Screenshot](http://i.imgur.com/LU6hS.png)
 
 TTEnhanced is currently only available for the Chrome Web Browser, although plans for getting it on Firefox are coming soon.
 
