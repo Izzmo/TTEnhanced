@@ -1462,6 +1462,17 @@
       });
     }
     
+    // add Turntable.fm Calendar button
+    $button = $('<div id="tte-calendar"><button type="button" name="" value="">Calendar</button></div>').click(function() {
+      $frame = $('#tte-calendar-frame');
+      if($frame.length)
+        $frame.remove();
+      else {
+        $('body').append('<iframe id="tte-calendar-frame" src="https://www.google.com/calendar/embed?showTitle=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;mode=AGENDA&amp;height=400&amp;wkst=1&amp;bgcolor=%23ffffff&amp;src=r45malsboglaloqguqve4n375o%40group.calendar.google.com&amp;color=%232F6309&amp;ctz=America%2FChicago" style="border-width: 0px; top: 50px; left: ' + ($('#tte-calendar').position().left - 200) + 'px; position: absolute; z-index: 3000;" width="400" height="400" frameborder="0" scrolling="no"></iframe>');
+      }
+    });
+    $('div.header div.room-buttons').before($button);
+    
     // get settings from extension
     window.tte.eventManager.queue({api: 'settings', code: 'get'}, function(response) {
       // check if want notifications
