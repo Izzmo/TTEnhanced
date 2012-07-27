@@ -1196,7 +1196,7 @@
         setTimeout(function() { window.tte.ui.addSongToBottom(); }, 2000);
       } else {
         $('div.songlist div.queue div.song').each(function(i) {
-          if(i < 1 || $(this).find('div.goBottom').length) return;
+          if($(this).find('div.goBottom').length) return;
           var $goB = $('<div class="goBottom"></div>').click(function() {
             window.turntable.playlist.moveSongToBottomClicked(this);
           });
