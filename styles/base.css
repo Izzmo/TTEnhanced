@@ -264,3 +264,25 @@ div#tteui-settings div.spots > div #tteSpotSavingBootMessage {
 #overlay h1.tte-updated {
   padding-left: 60px;
 }
+
+.playlist-container .song .goTop {
+  top: 5px;
+}
+
+.playlist-container .song .goBottom {
+  top: 22px;
+  position: absolute;
+  left: 8px;
+  width: 15px;
+  height: 15px;
+  background: url('../images/go-bottom.png') transparent no-repeat 0px -23px;
+  cursor: pointer;
+}
+
+.playlist-container .song .goBottom:hover {
+  background-position-y: -7px;
+}
+
+.playlist-container .topSong .goBottom {
+  display: none;
+}

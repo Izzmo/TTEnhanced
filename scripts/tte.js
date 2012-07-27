@@ -357,6 +357,11 @@
             $img.attr('src', $img.attr('src').replace(/\/avatars\/[0-9]{1,4}\//, '/avatars/' + d.avatarid + '/'));
           }
           break;
+          
+        case 'playlist_complete':
+          // catch adding a song to add the to bottom
+          window.tte.ui.addSongToBottom();
+          break;
       }
     },
 
@@ -1165,6 +1170,22 @@
           util.showOverlay(settings);
         });
       }
+    },
+    addSongToBottom: function() {
+      if(!$('div.songlist div.queue div.song').length) {
+        setTimeout(function() { window.tte.ui.addSongToBottom(); }, 2000);
+      } else {
+        $('div.songlist div.queue div.song').each(function(i) {
+          if(i < 1 || $(this).find('div.goBottom').length) return;
+          var $goB = $('<div class="goBottom"></div>').click(function() {
+            window.turntable.playlist.moveSongToBottomClicked(this);
+          });
+          $(this).find('div.goTop').after($goB);
+        });
+        $('div.goTop').click(function() {
+          window.tte.ui.addSongToBottom();
+        });
+      }
     }
   };
   
@@ -1384,6 +1405,43 @@
         $('form.input-box input').focus();
       }
     });
+    
+    // add 'To Bottom' button on queue
+    window.tte.ui.addSongToBottom();
+    
+    window.turntable.playlist.moveSongToBottomClicked = function(a) {
+      var b = $(a).closest(".song");
+      ASSERT(!b.hasClass("bottomSong"), "Cannot move bottom song to bottom.");
+      window.turntable.playlist.moveFileToBottom(b.data("songData").fileId);
+    }
+    
+    window.turntable.playlist.moveFileToBottom = function(a) {
+      window.turntable.playlist.queueTask(function() {
+        var b;
+        for(var b=1; b < window.turntable.playlist.files.length; b++) {
+          if(window.turntable.playlist.files[b].fileId == a) break;
+        }
+        
+        if(b == window.turntable.playlist.files.length) return;
+        var c = window.turntable.playlist.files[b];
+        LOG("Moving '" + c.metadata.song + "' to bottom.");
+        
+        if(window.turntable.playlist.currentSong && c.fileId == window.turntable.playlist.currentSong.fileId) {
+          LOG("Moving a currently-playing song to bottom is a no-op.");
+          return;
+        }
+        
+        window.turntable.playlist.files.splice(b, 1);
+        window.turntable.playlist.files.push(c);
+        window.turntable.playlist.updatePlaylist(null, true);
+        window.tte.socket({
+          api: "playlist.reorder",
+          playlist_name: "default",
+          index_from: b,
+          index_to: window.turntable.playlist.files.length - 1
+        });
+      });
+    }
     
     // get settings from extension
     window.tte.eventManager.queue({api: 'settings', code: 'get'}, function(response) {
