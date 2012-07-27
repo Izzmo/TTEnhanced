@@ -1192,18 +1192,16 @@
       }
     },
     addSongToBottom: function() {
-      if(!$('div.songlist div.queue div.song').length) {
+      var $songs = $('div.songlist div.queue div.song');
+      if(!$songs.length) {
         setTimeout(function() { window.tte.ui.addSongToBottom(); }, 2000);
       } else {
-        $('div.songlist div.queue div.song').each(function(i) {
+        $songs.each(function(i) {
           if($(this).find('div.goBottom').length) return;
           var $goB = $('<div class="goBottom"></div>').click(function() {
             window.turntable.playlist.moveSongToBottomClicked(this);
           });
           $(this).find('div.goTop').after($goB);
-        });
-        $('div.goTop').click(function() {
-          window.tte.ui.addSongToBottom();
         });
       }
     }
