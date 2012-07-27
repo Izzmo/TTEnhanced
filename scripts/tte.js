@@ -174,6 +174,9 @@
                   +'<li>Enhancement: You can now look-up someone on ttStats by clicking on their name in chat, the guest list or your buddy list.'
                   +'<li>Bug Fix: If a fan drops from deck, their heart next to their name in the guest list will now appear.'
                   +'<li>Bug Fix: New Updates dialog header now shows correctly.'
+                  +'<li>Enhancement: You can now send songs to the bottom of your queue.'
+                  +'<li>Enhancement: Notification now shows up on song change.'
+                  +'<li>Enhancement: Notification now shows up when a dj spot is available.'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
@@ -233,6 +236,9 @@
           window.tte.ui.upvotes = 0;
           window.tte.ui.downvotes = 0;
           window.tte.ui.snags = 0;
+          
+          // Send notification
+          window.tte.ui.sendNotification(window.tte.ttObj.currentSong.djname + ' started playing:', window.tte.ttObj.currentSong.metadata.song + ' by ' + window.tte.ttObj.currentSong.metadata.artist);
 
           break;
           
@@ -279,10 +285,14 @@
           
         case 'rem_dj':
           window.tte.ui.guestListAddUser(d.user[0]);
+          
+          // Send notification
+          window.tte.ui.sendNotification('DJ Spot Available!', d.user[0].name + ' dropped from the decks.');
           break;
           
         case 'add_dj':
           window.tte.ui.guestListAddUser(d.user[0]);
+          
           if(window.tte.ttObj.isMod() && window.tte.spotSaving.spot_saving) {
             var allOnDeck = 0;
             var total = window.tte.spotSaving.spot_users.length;
