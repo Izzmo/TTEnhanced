@@ -177,6 +177,7 @@
                   +'<li>Enhancement: You can now send songs to the bottom of your queue.'
                   +'<li>Enhancement: Notification now shows up on song change.'
                   +'<li>Enhancement: Notification now shows up when a dj spot is available.'
+                  +'<li>Enhancement: Added turntable.fm calendar.'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
