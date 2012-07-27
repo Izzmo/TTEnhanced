@@ -1462,6 +1462,7 @@
     }
     
     // add Turntable.fm Calendar button
+    $('#tte-calendar, #tte-calendar-frame').remove();
     $button = $('<div id="tte-calendar"><button type="button" name="" value="">Calendar</button></div>').click(function() {
       $frame = $('#tte-calendar-frame');
       if($frame.length)
