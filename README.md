@@ -8,6 +8,11 @@ TTEnhanced is currently only available for the Chrome Web Browser, although plan
 
 `TTEnhanced` has been updated to fix the non-loading bug in Turntable.fm's latest update (July 18th, 2012)!
 
+Installation
+------------
+To install the extension onto your browser, click the link below and follow the browser's instructions.
+* [TTEnhanced.crx](https://github.com/downloads/Izzmo/TTEnhanced/TTEnhanced-2.3.0.crx)
+
 Changelog
 ---------
 v2.3.0
@@ -28,10 +33,3 @@ v2.3.0
 * Enhancement: Notification now shows up on song change.
 * Enhancement: Notification now shows up when a dj spot is available.
 * Enhancement: Added turntable.fm calendar.
-
-Installation
-------------
-
-To install the extension onto your browser, click the link below and follow the browser's instructions.
-
-* [TTEnhanced.crx](https://github.com/downloads/Izzmo/TTEnhanced/TTEnhanced-2.3.0.crx)
