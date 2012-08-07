@@ -316,9 +316,8 @@
               if(uid == '')
                 total--; //person not in the room, so don't take him into account'
               else {
-                if($.inArray(uid, window.tte.ttObj.djIds) >= 0) {
+                if($.inArray(uid, window.tte.ttObj.djIds) >= 0)
                   allOnDeck++;
-                };
               }
             });
             if(allOnDeck == total)
@@ -454,7 +453,7 @@
       g.find("div").remove();
 
       // sort
-      window.tte.ui.guestListAddUsers(g, 'super', supers.sort(window.tte.ui.userSort));;
+      window.tte.ui.guestListAddUsers(g, 'super', supers.sort(window.tte.ui.userSort));
       window.tte.ui.guestListAddUsers(g, 'mod', mods.sort(window.tte.ui.userSort));
       window.tte.ui.guestListAddUsers(g, 'dj', djs.sort(window.tte.ui.userSort));
       window.tte.ui.guestListAddUsers(g, 'fan', fans.sort(window.tte.ui.userSort));
@@ -530,6 +529,7 @@
           found = $this;
           return false;
         }
+        return true;
       });
       if(found == undefined)
         $s.append(text);
@@ -922,7 +922,8 @@
           $topPanel = $('#top-panel'),
           $right = $('#right-panel'),
           height = $room.height(),
-          width = $room.width();
+          width = $room.width(),
+          $chatContainer, $userContainer, $playlist, $view;
 
       switch(type) {
         case -1:
@@ -933,18 +934,18 @@
             $(".chatHeader").mousedown(window.tte.ttObj.chatResizeStart);
             
             // move chat window back inside right-panel container
-            var $chatContainer = $roomView.find('div.chat-container').css({top: '258px', left: '', 'height': '345px'});
+            $chatContainer = $roomView.find('div.chat-container').css({top: '258px', left: '', 'height': '345px'});
             $chatContainer.find('div.messages').css({'height': '283px'});
             $chatContainer.appendTo($right);
             
             // update user list
-            var $userContainer = $roomView.find('div.guest-list-container').css({top: '258px', left: '', 'height': '345px'});
+            $userContainer = $roomView.find('div.guest-list-container').css({top: '258px', left: '', 'height': '345px'});
             $userContainer.find('div.guests').css({'height': '283px'});
             $userContainer.appendTo($right);
             
             // update sizes on DJ Queue window
-            var $playlist = $('#playlist');
-            var $view = $playlist.find('div.mainPane');
+            $playlist = $('#playlist');
+            $view = $playlist.find('div.mainPane');
             $playlist.height(259);
             $view.height(259);
             $view.find('div.songlist').height(166);
@@ -961,13 +962,13 @@
           $(".chatHeader").unbind('mousedown');
           
           // move chat window outside panel container
-          var $chatContainer = $right.find('div.chat-container').css({top: '99px', left: width+'px', 'height': height+'px'});
+          $chatContainer = $right.find('div.chat-container').css({top: '99px', left: width+'px', 'height': height+'px'});
           $chatContainer.find('div.messages').css({'height': (height-62)+'px'});
           $chatContainer.appendTo($roomView);
 
           // update sizes on DJ Queue window
-          var $playlist = $('#playlist');
-          var $view = $playlist.find('div.mainPane');
+          $playlist = $('#playlist');
+          $view = $playlist.find('div.mainPane');
           $playlist.height(height).parent().parent().height(height);
           $view.height(height-25-36);
           $view.find('div.songlist').height(height-25-68-36);
@@ -978,7 +979,7 @@
           }
 
           // update user list
-          var $userContainer = $right.find('div.guest-list-container').css({top: '99px', left: (width+307)+'px', 'height': height+'px'});
+          $userContainer = $right.find('div.guest-list-container').css({top: '99px', left: (width+307)+'px', 'height': height+'px'});
           $userContainer.find('div.guests').css({'height': (height-62)+'px'});
           $userContainer.appendTo($roomView);
           break;
@@ -993,13 +994,13 @@
           $(".chatHeader").unbind('mousedown');
           
           // move chat window outside panel container
-          var $chatContainer = $right.find('div.chat-container').css({top: '99px', left: width+'px', 'height': height+'px'});
+          $chatContainer = $right.find('div.chat-container').css({top: '99px', left: width+'px', 'height': height+'px'});
           $chatContainer.find('div.messages').css({'height': (height-62)+'px'});
           $chatContainer.appendTo($roomView);
 
           // update sizes on DJ Queue window
-          var $playlist = $('#playlist');
-          var $view = $playlist.find('div.mainPane');
+          $playlist = $('#playlist');
+          $view = $playlist.find('div.mainPane');
           $playlist.height(301).parent().parent().height(height);
           $view.height(301-25-36);
           $view.find('div.songlist').height(301-25-68-36);
@@ -1010,7 +1011,7 @@
           }
 
           // update user list
-          var $userContainer = $right.find('div.guest-list-container').css({top: '300px', 'height': '302px'});
+          $userContainer = $right.find('div.guest-list-container').css({top: '300px', 'height': '302px'});
           $userContainer.find('div.guests').css({'height': (height-301-62)+'px'});
           break;
           
@@ -1024,12 +1025,12 @@
           $(".chatHeader").unbind('mousedown');
           
           // move chat window outside panel container
-          var $chatContainer = $right.find('div.chat-container').css({top: '300px', 'height': '302px'});
+          $chatContainer = $right.find('div.chat-container').css({top: '300px', 'height': '302px'});
           $chatContainer.find('div.messages').css({'height': (height-301-62)+'px'});
 
           // update sizes on DJ Queue window
-          var $playlist = $('#playlist');
-          var $view = $playlist.find('div.mainPane');
+          $playlist = $('#playlist');
+          $view = $playlist.find('div.mainPane');
           $playlist.height(301).parent().parent().height(height);
           $view.height(301-25-36);
           $view.find('div.songlist').height(301-25-68-36);
@@ -1040,7 +1041,7 @@
           }
 
           // update user list
-          var $userContainer = $right.find('div.guest-list-container').css({top: '99px', left: width+'px', 'height': height+'px'});
+          $userContainer = $right.find('div.guest-list-container').css({top: '99px', left: width+'px', 'height': height+'px'});
           $userContainer.find('div.guests').css({'height': (height-62)+'px'});
           $userContainer.appendTo($roomView);
           break;
@@ -1139,6 +1140,7 @@
                 return false;
               }
             }
+            return true;
           });
 
           window.tte.suggestedSpotSavingUser = false;
@@ -1184,7 +1186,6 @@
                 }
               });
             }
-            return true;
           });
 
           util.showOverlay(settings);
@@ -1303,7 +1304,7 @@
     turntable.addEventListener("message", window.tte.ui.listener);
     
     // setup AFK Timers
-    for(var prop in window.tte.ttObj.users) {
+    for(prop in window.tte.ttObj.users) {
       window.tte.isAfk(prop);
     }
     
@@ -1349,13 +1350,13 @@
           a = util.alphabetize(a, "name");
           favs = util.alphabetize(favs, "name");
           a = favs.concat(a);
-          for (var g = 0, l = a.length; g < l; g++)
+          for (g = 0, l = a.length; g < l; g++)
             this.addBuddy(a[g]);
         }
         else
           $(this.nodes.buddyList).append(util.buildTree(BuddyListPM.layouts.noBuddies));
           
-        for (var g in this.pmWindows) {
+        for (g in this.pmWindows) {
           var k = this.pmWindows[g].otherUserId;
           if (k in e)
             this.pmWindows[g].updateStatus(e[k].status, false);
@@ -1436,7 +1437,7 @@
     window.turntable.playlist.moveFileToBottom = function(a) {
       window.turntable.playlist.queueTask(function() {
         var b;
-        for(var b=1; b < window.turntable.playlist.files.length; b++) {
+        for(b = 1; b < window.turntable.playlist.files.length; b++) {
           if(window.turntable.playlist.files[b].fileId == a) break;
         }
         
