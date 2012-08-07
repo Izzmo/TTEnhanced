@@ -1,14 +1,27 @@
 {
   "name": "TTEnhanced",
   "update_url": "http://izzmo.com/tt/interface/update.xml",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "manifest_version": 2,
   "description": "An extension for Turntable.fm which widens the operating area and also adds a lot of extra 'bonus' features.",
-  "default_icon": "icon.png",
-  //"default_popup": "popup.html",
-  "default_title": "TTEnhanced",
-  "homepage_url": "http://ttenhanced.codeplex.com",
+  "browser_action": {
+    "default_icon": "icon.png",
+    //"default_popup": "popup.html",
+    "default_title": "TTEnhanced"
+  },
+  "homepage_url": "http://github.com/izzmo/ttenhanced",
   "permissions": [ "tabs", "unlimitedStorage", "idle", "notifications", "*://turntable.fm/" ],
    //"options_page": "settings.html",
-   "background_page": "background.html"
+   "background": {
+     "scripts": ["scripts/jquery.js", "scripts/background.js"]
+   },
+   "web_accessible_resources": [
+     "scripts/tte.js",
+     "scripts/turntablecli.js",
+     "styles/base.css",
+     "styles/jquery-ui.css",
+     "styles/style-stack-1.css",
+     "styles/style-stack-2.css",
+     "styles/style.css"
+   ]
 }

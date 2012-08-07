@@ -159,25 +159,11 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '2.3.0',
+    version: '2.3.1',
     newUpdatesMsg: '<ul>'
-                  +'<li>Bug Fix: Room linking no longer requires the \'http://www\' in it to be considering a room link.</li>'
-                  +'<li>Enhancement: You can now turn off/on the command-line interface in the settings.</li>'
-                  +'<li>Enhancement: \'Enhanced\' was added under the logo instead of replacing the \'My DJ Queue\' text.</li>'
-                  +'<li>Enhancement: If you start typing, TTE will automatically focus the chat box for you.</li>'
-                  +'<li>Enhancement: The \'Remove DJ\' option when clicking on a DJ in the user list now shows at the end of options.</li>'
-                  +'<li>Bug Fix: If you are made a moderator, you no longer have to refresh the page to see the room moderation tools.</li>'
-                  +'<li>Bug Fix: If you mod/unmod/fan/unfan someone, the guest list now immediately updates.</li>'
-                  +'<li>Bug Fix: You can now press enter to send a slash command such as /boo instead of /boot.</li>'
-                  +'<li>Enhancement: You can now turn off the command-line interface (CLI) auto-completion.</li>'
-                  +'<li>Enhancement: If someone changes their avatar, it now immediately updates the guest list instead of after a song change.'
-                  +'<li>Enhancement: You can now look-up someone on ttStats by clicking on their name in chat, the guest list or your buddy list.'
-                  +'<li>Bug Fix: If a fan drops from deck, their heart next to their name in the guest list will now appear.'
-                  +'<li>Bug Fix: New Updates dialog header now shows correctly.'
-                  +'<li>Enhancement: You can now send songs to the bottom of your queue.'
-                  +'<li>Enhancement: Notification now shows up on song change.'
-                  +'<li>Enhancement: Notification now shows up when a dj spot is available.'
-                  +'<li>Enhancement: Added turntable.fm calendar.'
+                  +'<li>Bug Fix: Room linking now requires there be a slash followed by one character or more to be considered a room link.</li>'
+                  +'<li>Bug Fix: Updated Chrome Exntesion Manifest file so it can be loaded.</li>'
+                  +'<li>Bug Fix: Sometimes chat (or the whole UI) would not appear properly if the page was loading slow.</li>'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
@@ -924,6 +910,11 @@
           height = $room.height(),
           width = $room.width(),
           $chatContainer, $userContainer, $playlist, $view;
+          
+      if(height <= 0 || width <= 0) {
+        setTimeout(function() { var t = type, c = change; window.izzmo.ui.setDisplay(t, c); }, 2000);
+        return;
+      }
 
       switch(type) {
         case -1:
@@ -1270,15 +1261,6 @@
         return b.promise();
     }
     
-    var $outer = $('#outer'),
-        $turntable = $('#turntable'),
-        $roomView = $turntable.find('div.roomView'),
-        $room = $($turntable.find('div.roomView > div')[1]),
-        $topPanel = $('#top-panel'),
-        $right = $('#right-panel'),
-        height = $room.height(),
-        width = $room.width();
-
     // Add TTEnhanced under TT Logo
     $('#top-panel div.header').find('#tte-logo').remove().end().append($('<div id="tte-logo">Enhanced</div>'));
     
@@ -1290,7 +1272,7 @@
     // add votes to top bar
     $('#top-panel div.votes').first().remove();
     window.tte.ui.votes = $('<div class="votes"><img src="http://www.pinnacleofdestruction.net/tt/images/arrow_down_red.png" alt="Lames" /> <span>0</span> <img src="http://www.pinnacleofdestruction.net/tt/images/arrow_up_green.png" alt="Awesomes" /> <span>' + window.tte.ttObj.upvoters.length + '</span> <img src="http://www.pinnacleofdestruction.net/tt/images/heart_votes.png" alt="Song Snags" /> <span>0</span></div>');
-    $topPanel.find('div.info').append(window.tte.ui.votes);
+    $('#top-panel').find('div.info').append(window.tte.ui.votes);
     if(window.tte.ttObj.upvoters.length == 0) {
       setTimeout(function() {
         $(window.tte.ui.votes.find('span')[1]).html(window.tte.ttObj.upvoters.length);
