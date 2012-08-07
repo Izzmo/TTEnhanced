@@ -1,21 +1,23 @@
-TTEnhanced
-==========
+# TTEnhanced
 
-`TTEnhanced` is a Turntable.fm Chrome extension used for giving the website a bit of a face-lift. It adds cosmetic changes to the website, room moderation, drop down lists for easier usability, and much more.
+TTEnhanced (TTE) is a Turntable.fm Chrome extension used for giving the website a bit of a face-lift. It adds cosmetic changes to the website, room moderation, drop down lists for easier usability, and much more.
 ![Extension Screenshot](http://i.imgur.com/LU6hS.png)
 
-TTEnhanced is currently only available for the Chrome Web Browser, although plans for getting it on Firefox are coming soon.
+TTE is currently only available for the Chrome Web Browser, although plans for getting it on Firefox are coming soon.
 
-`TTEnhanced` has been updated to fix the non-loading bug in Turntable.fm's latest update (July 18th, 2012)!
+## Installation
 
-Installation
-------------
 To install the extension onto your browser, click the link below and follow the browser's instructions.
 * [TTEnhanced.crx](https://github.com/downloads/Izzmo/TTEnhanced/TTEnhanced-2.3.0.crx)
 
-Changelog
----------
-v2.3.0
+## Changelog
+
+### v2.3.1
+* Bug Fix: Room linking now requires there be a slash followed by one character or more to be considered a room link.
+* Bug Fix: Updated Chrome Exntesion Manifest file so it can be loaded.
+* Bug Fix: Sometimes chat (or the whole UI) would not appear properly if the page was loading slow.
+
+### v2.3.0
 * Bug Fix: Room linking no longer requires the 'http://www' in it to be considering a room link.
 * Enhancement: You can now turn off/on the command-line interface in the settings.
 * Enhancement: 'Enhanced' was added under the logo instead of replacing the 'My DJ Queue' text.
