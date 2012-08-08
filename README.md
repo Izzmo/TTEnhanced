@@ -8,9 +8,12 @@ TTE is currently only available for the Chrome Web Browser, although plans for g
 ## Installation
 
 To install the extension onto your browser, click the link below and follow the browser's instructions.
-* [TTEnhanced.crx](https://github.com/downloads/Izzmo/TTEnhanced/TTEnhanced-2.3.0.crx)
+* [TTEnhanced @ Chrome Web Store](https://chrome.google.com/webstore/detail/nhjclkggjlllgdjhcbbfkcjkgpfbnkgd)
 
 ## Changelog
+
+### v2.3.3
+Had to update several files to get the extension to upload to the Chrome Web Store. In doing so, the icon was updated.
 
 ### v2.3.2
 Quick fix to include some assets in the Chrome manifest file that made them not appear on page load.
