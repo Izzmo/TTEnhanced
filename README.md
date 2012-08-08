@@ -12,6 +12,9 @@ To install the extension onto your browser, click the link below and follow the 
 
 ## Changelog
 
+### v2.3.2
+Quick fix to include some assets in the Chrome manifest file that made them not appear on page load.
+
 ### v2.3.1
 * Bug Fix: Room linking now requires there be a slash followed by one character or more to be considered a room link.
 * Bug Fix: Updated Chrome Exntesion Manifest file so it can be loaded.

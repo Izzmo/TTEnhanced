@@ -159,11 +159,9 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '2.3.1',
+    version: '2.3.2',
     newUpdatesMsg: '<ul>'
-                  +'<li>Bug Fix: Room linking now requires there be a slash followed by one character or more to be considered a room link.</li>'
-                  +'<li>Bug Fix: Updated Chrome Exntesion Manifest file so it can be loaded.</li>'
-                  +'<li>Bug Fix: Sometimes chat (or the whole UI) would not appear properly if the page was loading slow.</li>'
+                  +'<li>Bug Fix: Some images were not showing (i.e. \'Push to Bottom\').</li>'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
