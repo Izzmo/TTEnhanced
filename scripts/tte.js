@@ -159,9 +159,10 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '2.3.2',
+    version: '2.3.3',
     newUpdatesMsg: '<ul>'
                   +'<li>Bug Fix: Some images were not showing (i.e. \'Push to Bottom\').</li>'
+                  +'<li>Enhancement: Extension is now listed on the Chrome Web Store. Please find us and give us some good feedback!</li>'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
