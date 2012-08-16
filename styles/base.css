@@ -276,11 +276,11 @@ div#tteui-settings div.spots > div #tteSpotSavingBootMessage {
   padding-left: 60px;
 }
 
-.playlist-container .song .goTop {
-  top: 5px;
+#songs .song .goTop {
+  /*top: 5px;*/
 }
 
-.playlist-container .song .goBottom {
+#songs .goBottom {
   top: 22px;
   position: absolute;
   left: 8px;
@@ -290,11 +290,11 @@ div#tteui-settings div.spots > div #tteSpotSavingBootMessage {
   cursor: pointer;
 }
 
-.playlist-container .song .goBottom:hover {
+#songs .goBottom:hover {
   background-position-y: -7px;
 }
 
-.playlist-container .topSong .goBottom {
+#songs .topSong .goBottom {
   display: none;
 }
 

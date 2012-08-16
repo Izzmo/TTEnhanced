@@ -41,6 +41,7 @@
 
 .chatHeader {
   cursor: default;
+  height: 26px;
 }
 
 .chatResizeIcon {

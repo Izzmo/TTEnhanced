@@ -959,9 +959,9 @@
           // update sizes on DJ Queue window
           $playlist = $('#playlist');
           $view = $playlist.find('div.mainPane');
-          $playlist.height(height).parent().parent().height(height);
-          $view.height(height-25-36);
-          $view.find('div.songlist').height(height-25-68-36);
+          $playlist.height(height-1).parent().parent().height(height-1);
+          $view.height(height-26-36);
+          $('#songs').height(height-26-36-38);
           if(!$('#totalSongs').length) {
             $playlist.append('<div class="chatBar"><div class="guestListSize"><span id="totalSongs">0</span> songs in your queue.</div></div>');
             if(window.tte.ui.updateSongCount() == 0)
@@ -1183,16 +1183,24 @@
       }
     },
     addSongToBottom: function() {
-      var $songs = $('div.songlist div.queue div.song');
-      if(!$songs.length) {
+      return;
+      var $songs = $('#songs li.song');
+      if(!$songs.length)
         setTimeout(function() { window.tte.ui.addSongToBottom(); }, 2000);
-      } else {
-        $songs.each(function(i) {
-          if($(this).find('div.goBottom').length) return;
-          var $goB = $('<div class="goBottom"></div>').click(function() {
-            window.turntable.playlist.moveSongToBottomClicked(this);
-          });
-          $(this).find('div.goTop').after($goB);
+      else {
+        $songs.each(function() {
+          var $this = $(this);
+          if($this.find('div.goBottom').length) return;
+          var $goB = $('<div class="goBottom"></div>').on('click', $.proxy(function(g) {
+            var d = $(g.target).closest('.song'), f = d.data('songData').fileId, c = this.attributes.songids.indexOf(f), count = 0;
+            for(fid in turntable.playlist.songsByFid) count++;
+            window.turntable.playlist.reorder(c, count - 1).done($.proxy(function() {
+              this.reorderBySongid(f, count - 1);
+              if(window.turntable.playlist.isFiltering)
+                window.turntable.playlist.savedScrollPosition = 0;
+            }, this));
+          }, this));
+          $this.find('div.goTop').after($goB);
         });
       }
     }
@@ -1408,40 +1416,6 @@
     
     // add 'To Bottom' button on queue
     window.tte.ui.addSongToBottom();
-    
-    window.turntable.playlist.moveSongToBottomClicked = function(a) {
-      var b = $(a).closest(".song");
-      ASSERT(!b.hasClass("bottomSong"), "Cannot move bottom song to bottom.");
-      window.turntable.playlist.moveFileToBottom(b.data("songData").fileId);
-    }
-    
-    window.turntable.playlist.moveFileToBottom = function(a) {
-      window.turntable.playlist.queueTask(function() {
-        var b;
-        for(b = 1; b < window.turntable.playlist.files.length; b++) {
-          if(window.turntable.playlist.files[b].fileId == a) break;
-        }
-        
-        if(b == window.turntable.playlist.files.length) return;
-        var c = window.turntable.playlist.files[b];
-        LOG("Moving '" + c.metadata.song + "' to bottom.");
-        
-        if(window.turntable.playlist.currentSong && c.fileId == window.turntable.playlist.currentSong.fileId) {
-          LOG("Moving a currently-playing song to bottom is a no-op.");
-          return;
-        }
-        
-        window.turntable.playlist.files.splice(b, 1);
-        window.turntable.playlist.files.push(c);
-        window.turntable.playlist.updatePlaylist(null, true);
-        window.tte.socket({
-          api: "playlist.reorder",
-          playlist_name: "default",
-          index_from: b,
-          index_to: window.turntable.playlist.files.length - 1
-        });
-      });
-    }
     
     // add Turntable.fm Calendar button
     $('#tte-calendar, #tte-calendar-frame').remove();
