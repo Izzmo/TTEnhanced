@@ -17,8 +17,8 @@
     settings: {
       boot_linkers: true
     },
-    isAfk: function(uid) {
-      for(var prop in window.tte.timers) {
+    isAfk: function(uid) { 
+     for(var prop in window.tte.timers) {
         if(window.tte.timers[prop].userid == uid) {
           var afk = (window.tte.timers[prop].time <= ((new Date().getTime()) - 600000));
           window.tte.timers[prop].time = new Date().getTime();
@@ -557,7 +557,8 @@
               l[2].push([
                 'a.guestOption',
                 {
-                  event: {click: function() {
+                  event: {click: function(e) {
+                    e.preventDefault();
                     window.tte.eventManager.queue({api: 'getNote', userid: $this.attr('id')}, function(response) {
                       var $html = $(util.buildTree(
                         ["div.modal", {},
@@ -589,7 +590,8 @@
               ],
               ['a.guestOption',
                 {
-                  event: {click: function() {
+                  event: {click: function(e) {
+                    e.preventDefault();
                     window.open('http://ttstats.info/user/' + $this.attr('id'), '_newtab');
                     $(this).parent().remove();
                   }},
@@ -641,7 +643,8 @@
         l[2].splice(4, 0, [
           'a.guestOption',
           {
-            event: { click: function() {
+            event: { click: function(e) {
+              e.preventDefault();
               window.tte.eventManager.queue({ api: 'getNote', userid: f }, function(response) {
                 var $html = $(util.buildTree(
                   ["div.modal", {},
@@ -677,7 +680,8 @@
         // add ttStats look-up option
         l[2].splice(3, 0, ['a.guestOption',
           {
-            event: {click: function() {
+            event: {click: function(e) {
+              e.preventDefault();
               window.open('http://ttstats.info/user/' + f, '_newtab');
               $(this).parent().remove();
             }},
@@ -789,10 +793,14 @@
           if(v[2] == "Make a Moderator" || v[2] == "Remove Moderator" || v[2] == "Boot User")
             delete l[2][i];
         });
+        // remove Send Private Message and re-add (for some reason TT changed their code and now will refresh the page when clicked)
+        //delete l[2][0];
+        l[2].splice(2, 1, Room.layouts.guestOption("Send Private Message", function() { turntable.buddyList.room.handlePM({ senderid: d.userid }, true); }));
         // add Go To Room item
         l[2].splice(4, 0, ['a.guestOption',
             {
-              event: {click: function() {
+              event: {click: function(e) {
+                e.preventDefault();
                 window.open('http://ttstats.info/user/' + d.userid, '_newtab');
                 $(this).parent().remove();
               }},
@@ -800,14 +808,17 @@
             },
             'Look-up on ttStats'
           ],
-          ["a#" + d.userid + ".guestOption", {event: {'click': function() {
-            turntable.setPage(d.roomShortcut, d.roomId);
-            $('div.guestOptionsContainer').remove();
-            turntable.buddyList.toggle();
+          ["a#" + d.userid + ".guestOption", {
+            event: {'click': function(e) {
+              e.preventDefault();
+              turntable.setPage(d.roomShortcut, d.roomId);
+              $('div.guestOptionsContainer').remove();
+              turntable.buddyList.toggle();
           }}, href: '#'}, "Go To Room"],
           ['a.guestOption',
             {
-              event: {click: function() {
+              event: {click: function(e) {
+                e.preventDefault();
                 window.tte.eventManager.queue({api: 'getNote', userid: d.userid}, function(response) {
                   var $html = $(util.buildTree(
                     ["div.modal", {},
@@ -840,7 +851,8 @@
         
         // add favorite item
         if($.inArray(d.userid, window.tte.ui.settings.favorites) >= 0) {
-          l[2].splice(4, 0, ["a#" + d.userid + ".guestOption", {event: {'click': function() {
+          l[2].splice(4, 0, ["a#" + d.userid + ".guestOption", {event: {'click': function(e) {
+            e.preventDefault();
             var userid = $(this).attr('id');
             window.tte.eventManager.queue({api: 'favorite.remove', 'userid': userid});
             window.tte.ui.settings.favorites.splice($.inArray(userid, window.tte.ui.settings.favorites), 1);
@@ -850,7 +862,8 @@
           }}, href: '#'}, "Un-Favorite User"]);
         }
         else {
-          l[2].splice(4, 0, ["a#" + d.userid + ".guestOption", {event: {'click': function() {
+          l[2].splice(4, 0, ["a#" + d.userid + ".guestOption", {event: {'click': function(e) {
+            e.preventDefault();
             var userid = $(this).attr('id');
             window.tte.eventManager.queue({api: 'favorite.add', 'userid': userid});
             window.tte.ui.settings.favorites.push(userid);
