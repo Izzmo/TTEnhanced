@@ -12,6 +12,10 @@ To install the extension onto your browser, click the link below and follow the 
 
 ## Changelog
 
+### v2.3.4
+* Bug Fix: Could not see songs at bottom of queue.
+* Bug Fix: When clicking on some context menu items, the page would refresh.
+
 ### v2.3.3
 Had to update several files to get the extension to upload to the Chrome Web Store. In doing so, the icon was updated.
 

@@ -1,6 +1,6 @@
 {
   "name": "TTEnhanced",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "manifest_version": 2,
   "description": "An extension for Turntable.fm which widens the operating area and also adds a lot of extra 'bonus' features.",
   "browser_action": {

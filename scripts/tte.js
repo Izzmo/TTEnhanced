@@ -159,10 +159,10 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '2.3.3',
+    version: '2.3.4',
     newUpdatesMsg: '<ul>'
-                  +'<li>Bug Fix: Some images were not showing (i.e. \'Push to Bottom\').</li>'
-                  +'<li>Enhancement: Extension is now listed on the Chrome Web Store. Please find us and give us some good feedback!</li>'
+                  +'<li>Bug Fix: Could not see songs on bottom of queue.</li>'
+                  +'<li>Bug Fix: Browser page would refresh when clicking on some context menu items.</li>'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
