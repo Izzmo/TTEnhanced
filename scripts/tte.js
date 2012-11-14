@@ -1,6 +1,6 @@
 (function() {
-  $('<div style="position: absolute; color: white; font-size: 10px; top: 0px; padding-left: 5px; z-index: 10000;">TTEnhanced will be updated for the Turntable.fm soon!</div>').appendTo('body');
-  return;
+  //$('<div style="position: absolute; color: white; font-size: 10px; top: 0px; padding-left: 5px; z-index: 10000;">TTEnhanced will be updated for the Turntable.fm soon!</div>').appendTo('body');
+  //return;
   
   if(window.tte != undefined && window.tte.ui != undefined)
     turntable.removeEventListener("message", window.tte.ui.listener);
@@ -105,7 +105,7 @@
       },
       init: function() {
         // setup event handler
-        window.tte.eventManager.event.initEvent("tteEventWeb", true, true);
+       window.tte.eventManager.event.initEvent("tteEventWeb", true, true);
         $('#tteui-msg').bind('tteEventExt', function() {
           var data = JSON.parse($(this).html()),
               func = window.tte.eventManager.messages[data.msgId-1];
@@ -386,7 +386,7 @@
       if(window.tte.ttRoomObjs.current_dj)
       {
         window.tte.ttRoomObjs.current_dj[3].show();
-        window.tte.ttRoomObjs.current_dj[3].html(window.tte.ttRoomObjs.commafy(points) + suffix);
+        window.tte.ttRoomObjs.current_dj[3].html(util.commafy(points) + suffix);
         window.tte.ttRoomObjs.current_dj[4].points = points;
       }
 
@@ -421,7 +421,7 @@
           fans = [],
           users = [],
           g = $(".guest-list-container .guests");
-      
+      return;
       // get each type
       for (var f in window.tte.ttObj.users) {
         if(window.tte.ttObj.isDj(f))
@@ -457,6 +457,7 @@
       $("span#totalUsers").text(window.tte.ui.numUsers());
     },
     guestListAddUsers: function(obj, type, userList) {
+	  return;
       var title = '',
           html = '';
           
@@ -630,109 +631,147 @@
               clearInterval(window.tte.timerHover);
             });
     },
-    appendChatMessage: function (f, a, h, j) {
-      var e = this.nodes.chatLog;
-      var g = (e.scrollTop + $(e).height() + 20 >= e.scrollHeight);
-      var b = util.buildTree(Room.layouts.chatMessage);
-      var i = this;
-      $(b).find(".speaker").text(a).click(function (e) {
-        if(window.tte.ui.settings.showChatAvatarTooltip)
-          window.tte.ttRoomObjs.toggle_tipsy(f);
-        var l = Room.layouts.guestOptions(window.tte.ttObj.users[f], window.tte.ttObj);
-        
-        delete l[3]; // remove arrow
-              
-        l[2].splice(4, 0, [
-          'a.guestOption',
-          {
-            event: { click: function(e) {
-              e.preventDefault();
-              window.tte.eventManager.queue({ api: 'getNote', userid: f }, function(response) {
-                var $html = $(util.buildTree(
-                  ["div.modal", {},
-                    ["div.close-x", { event: { click: util.hideOverlay } } ],
-                    ["h1", "Set User Note"],
-                    ["br"],
-                    ["div", {}, "Enter any information you would like about this user below."],
-                    ["br"],
-                    ["textarea#userNoteField.textarea", {maxlength: 400} ],
-                    ["br"], ["br"],
-                    ["div.ok-button.centered-button", {
-                        event: {
-                          click: function() {
-                            var val = $('#userNoteField').val();
-                            window.tte.eventManager.queue({api: 'setNote', userid: f, note: val});
-                            util.hideOverlay();
-                          }
-                        }
-                      }
-                    ]
-                  ]
-                ));
-                $html.find('#userNoteField').val(response.note);
-                util.showOverlay($html);
-              });
-              $('div.guestOptionsContainer').remove();
-            }},
-            href: '#'
-          },
-          'Set Note'
-        ]);
-        
-        // add ttStats look-up option
-        l[2].splice(3, 0, ['a.guestOption',
-          {
-            event: {click: function(e) {
-              e.preventDefault();
-              window.open('http://ttstats.info/user/' + f, '_newtab');
-              $(this).parent().remove();
-            }},
-            href: '#'
-          },
-          'Look-up on ttStats'
-        ]);
-        
-        if(window.tte.ttObj.isDj(f)) {
-          // remove "Remove DJ" to end of the list
-          var rdj = l[2].splice(7, 1);
-          l[2].push(rdj[0]);
-        }
-              
-        var c = $(util.buildTree(l)).css({
-          top: $(this).offset().top + 'px',
-          left: $(this).offset().left + 'px',
-          right: 'auto'
-        });
-        $('body').append(c);
-      });
+    appendChatMessage: function(f, e, i, c) {
+      var d, b = false;
+      if (this.lastChatSpeakerid === f) {
+        d = this.$lastChatMessage;
+      } else {
+        d = $(util.buildTree(Room.layouts.chatMessage));
+        var h = this.userMap[f].avatarid;
+        d.find(".avatar").css("background-image", "url(/roommanager_assets/avatars/" + h + "/scaled/55/headfront.png)");
+        d.find(".speaker").text(e).data("userid", f);
+        b = true;
+        this.lastChatSpeakerid = f;
+        this.$lastChatMessage = d;
+      }
+      var g = $(util.buildTree(["div.text"]));
+	  
+	  //TTE Edit
+	  
+	  if(!(window.turntable.user.id in window.tte.ttObj.users)) return;
       
-      // bug in turntable.fm where it will randomly clear all users from the room and will cause this method to error out
-      if(!(window.turntable.user.id in window.tte.ttObj.users)) return;
-      
-      var list = window.tte.ttObj.users[window.turntable.user.id].name,
-          c = $(b).find(".text");
+      var list = window.tte.ttObj.users[window.turntable.user.id].name;
       $.each(window.tte.ui.settings.notifierKeywords, function(i, v) {
         if(v != undefined && v.length > 0)
           list += '|' + v;
       });
-      if(h.search(new RegExp(list, 'i')) >= 0)
-        $(b).addClass('mention');
-      
-      h = util.stripComboDiacritics(h);
-      if (h.length > 446) {
-        c.attr("title", h.substr(0, 2) == ": " ? h.substr(2) : h);
-        h = h.substr(0, 440) + "...";
+      if(i.search(new RegExp(list, 'i')) >= 0)	    
+        d.addClass('mention');
+		
+      //END
+	  
+      i = util.stripComboDiacritics(i);
+      if (i.length > 446) {
+        g.attr("title", i.substr(0, 2) == ": " ? i.substr(2) : i);
+        i = i.substr(0, 440) + "...";
       }
-      c.html(util.messageFilter(h));
-      if (j)
-        $(b).addClass(j);
-      $(e).append(b);
-      if (g)
-        e.scrollTop += 9001;
-      var d = $(e).find(".message");
-      if (d.length > 500)
-        d.slice(0, 2).remove();
+      g.html(util.messageFilter(i));
+      if (c) {
+        d.addClass(c);
+      }
+      if (b) {
+        d.find(".textContainer").append(g);
+        this.appendMessage(d);
+      } else {
+        this.checkChatScroll();
+        d.find(".textContainer").append(g);
+        this.updateChatScroll();
+      }
     },
+	guestOptions: function(a, d) {
+		var b = ["div.guestOptions.options",
+		{
+		  event: {
+			mouseover: function() {
+			  if (d.guestOptionsHoverTimer) {
+				clearTimeout(d.guestOptionsHoverTimer);
+			  }
+			},
+			mouseout: function() {
+			  d.guestOptionsHoverTimer = setTimeout(function() {
+				d.removeGuestListMenu();
+			  }, 1000);
+			}
+		  }
+		}];	
+		b.push(Room.layouts.guestOption("View Profile", "profile", a.userid, d));
+		b.push(Room.layouts.guestOption("Report User", "report_user", a.userid, d));
+		
+		//TTE Edit
+		
+		b.push(Room.layouts.guestOption("View TTStats", function() {
+			window.open('http://ttstats.info/user/' + a.userid, '_newtab');
+		}));
+		b.push(Room.layouts.guestOption("Set Note", function() {
+			window.tte.eventManager.queue({ api: 'getNote', userid: a.userid }, function(response) {
+				var $html = $(util.buildTree(
+				  ["div.modal", {},
+					["div.close-x", { event: { click: util.hideOverlay } } ],
+					["h1", "Set User Note"],
+					["br"],
+					["div", {}, "Enter any information you would like about this user below."],
+					["br"],
+					["textarea#userNoteField.textarea", {maxlength: 400} ],
+					["br"], ["br"],
+					["div.ok-button.centered-button", {
+						event: {
+						  click: function() {
+							var val = $('#userNoteField').val();
+							window.tte.eventManager.queue({api: 'setNote', userid: a.userid, note: val});
+							util.hideOverlay();
+						  }
+						}
+					  }
+					]
+				  ]
+				));
+				$html.find('#userNoteField').val(response.note);
+				util.showOverlay($html);
+			  });              
+		}));
+		
+		//-- End
+		
+		
+		if (a.userid == zUeQmFIoOO.myuserid && d.isDj()) {
+		  b.push(Room.layouts.guestOption("Skip My Song", "stop_song", a.userid, d));
+		  b.push(Room.layouts.guestOption("Quit DJing", "rem_dj", a.userid, d));
+		}
+		var c = d.roomData.metadata.moderator_id;
+		if (a.userid !== turntable.user.id && (d.isMod() || d.isSuperuser())) {
+		  if (turntable.user.acl >= a.acl) {
+			b.push(Room.layouts.guestOption("Boot User", "boot_user", a.userid, d));
+			if (d.isMod(a.userid)) {
+			  b.push(Room.layouts.guestOption("Remove Moderator", "rem_moderator", a.userid, d));
+			} else {
+			  b.push(Room.layouts.guestOption("Make a Moderator", "add_moderator", a.userid, d));
+			}
+		  }
+		  if (d.isDj(a.userid)) {
+			b.push(Room.layouts.guestOption("Remove DJ", "remove_dj", a.userid, d));
+		  }
+		}
+		if (a.userid != zUeQmFIoOO.myuserid) {
+		  if (a.fanof) {
+			b.push(Room.layouts.guestOption("Unfan", "remove_fan", a.userid, d));
+		  } else {
+			b.push(Room.layouts.guestOption("Become a Fan", "become_fan", a.userid, d));
+		  }
+		  b.push(Room.layouts.guestOption("Send Private Message", function() {
+			d.handlePM({
+			  senderid: a.userid
+			}, true);
+		  }));
+		}
+		return ["div.guestOptionsContainer.contextual-popup", {}, b, ["div.guestOptionsNib.nib",
+		{
+		  event: {
+			click: function() {
+			  d.removeGuestListMenu();
+			}
+		  }
+		}, ["div.guestOptionsNibArrow"]]];
+	},
     updateSongCount: function() {
       var count = 0;
       for(fid in turntable.playlist.songsByFid)
@@ -777,6 +816,7 @@
       }
     },
     buddyListBuddy: function(d, g, f) {
+		
       var b = ("roomName" in d && !f) ? ["div.room", { }, d.roomName] : "";
       var a = function() {
         d.fanof = true;
@@ -984,9 +1024,9 @@
           }
 
           // update user list
-          $userContainer = $right.find('div.guest-list-container').css({top: '99px', left: (width+307)+'px', 'height': height+'px'});
-          $userContainer.find('div.guests').css({'height': (height-62)+'px'});
-          $userContainer.appendTo($roomView);
+          //$userContainer = $right.find('div.guest-list-container').css({top: '99px', left: (width+307)+'px', 'height': height+'px'});
+          //$userContainer.find('div.guests').css({'height': (height-62)+'px'});
+         // $userContainer.appendTo($roomView);
           break;
           
         case 1:
@@ -1223,7 +1263,7 @@
   
   window.tte.ui.init = function() {
     for(var prop in window.turntable) {
-      if(window.turntable[prop] != undefined && window.turntable[prop].hasOwnProperty('currentDj'))
+      if(window.turntable[prop] != undefined && window.turntable[prop].hasOwnProperty('createRoom'))
         window.tte.ttObj = window.turntable[prop];
     }
     for(var prop in window.tte.ttObj) {
@@ -1233,7 +1273,7 @@
       }
     }
     for(var prop in window.tte.ttObj) {
-      if(window.tte.ttObj[prop] != undefined && window.tte.ttObj[prop].hasOwnProperty('set_dj_points'))
+      if(window.tte.ttObj[prop] != undefined && window.tte.ttObj[prop].hasOwnProperty('userLastVote'))
         window.tte.ttRoomObjs = window.tte.ttObj[prop];
     }
     
@@ -1314,6 +1354,9 @@
     
     // update append Chat message function
     window.tte.ttObj.appendChatMessage = window.tte.ui.appendChatMessage;
+	
+	//Update Guest Options
+	//window.Room.layouts.guestOptions = window.tte.ui.guestOptions;
     
     // add animations button to menu
     $('#tte-settings-menu-animations-icon').parent().remove();
@@ -1378,11 +1421,11 @@
     
     // add settings button to menu
     $('#tte-settings-menu-settings').remove();
-    $('#menuh').find('div.menuItem').last().before('<div id="tte-settings-menu-settings" class="menuItem">TTEnhanced</div>');
+    $('#settings-dropdown').find('li.option').last().before('<li id="tte-settings-menu-settings" class="option">TTEnhanced</li>');
     $('#tte-settings-menu-settings').bind('click', function() {
       var settings = $(util.buildTree(
         ["div#tteui-settings.settingsOverlay.modal", {},
-          ["div.close-x", {event: {click: util.hideOverlay}}],
+          ["div.close-x", {event: {click: turntable.hideOverlay}}],
           ["h1", "TTEnhanced UI Settings"],
           ["br"],
           ["div.fields", {} ],
@@ -1406,7 +1449,7 @@
               }
 
               window.tte.eventManager.queue({api: 'settings', code: 'set', settings: window.tte.ui.settings});
-              util.hideOverlay();
+              turntable.hideOverlay();
             }
           }}],
           ["br"]
@@ -1419,7 +1462,7 @@
       fields.append('<div><span class="tteOptionLabel">Display</span><select name="tteUiStyle" id="tteUiStyle"><option value="-1" ' + ((window.tte.ui.settings.displayType != -1) ? '' : 'selected') + '>Default</option><option value="0" ' + ((window.tte.ui.settings.displayType != 0) ? '' : 'selected') + '>3 Columns</option><option value="1" ' + ((window.tte.ui.settings.displayType != 1) ? '' : 'selected') + '>2 Columns - Queue/Guest Stacked</option><option value="2" ' + ((window.tte.ui.settings.displayType != 2) ? '' : 'selected') + '>2 Columns - Queue/Chat Stacked</option></select></div>');
       fields.append('<div><span class="tteOptionLabel">Notification Keywords:</span><input type="text" id="tteChatKeywords"/><p>If you would like to receive notifications for keywords other than your own username, you can enter them here -- comma delimited.</p></div>');
       fields.find('#tteChatKeywords').val(window.tte.ui.settings.notifierKeywords.join(','));
-      util.showOverlay(settings);
+      turntable.showOverlay(settings);
     });
     
     // Auto-Focus on Type
@@ -1500,7 +1543,7 @@
           ]
         ));
         html.find('div.field').html("See what's new in this version: <br /><br />" + window.tte.ui.newUpdatesMsg);
-        util.showOverlay(html);
+        turntable.showOverlay(html);
       }
     });
   }
