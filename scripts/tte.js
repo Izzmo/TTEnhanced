@@ -162,7 +162,7 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '2.3.5',
+    version: '2.3.6',
     newUpdatesMsg: '<ul>'
                   +'<li>Quick update to account for the immiment Turntable.fm update.</li>'
                   +'</ul>',
