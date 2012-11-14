@@ -159,10 +159,9 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '2.3.4',
+    version: '2.3.5',
     newUpdatesMsg: '<ul>'
-                  +'<li>Bug Fix: Could not see songs on bottom of queue.</li>'
-                  +'<li>Bug Fix: Browser page would refresh when clicking on some context menu items.</li>'
+                  +'<li>Quick update to account for the immiment Turntable.fm update.</li>'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
@@ -1504,6 +1503,10 @@
   }
   
   $(document).ready(function() {
+    if ($('#header').length) {
+      $('<div style="position: absolute; color: white; font-size: 10px; top: 0px; padding-left: 5px; z-index: 10000;">TTEnhanced will be updated for the Turntable.fm soon!</div>').appendTo('body');
+      return;
+    }
     var wait = 0,
     roomCheck = setInterval(function() {
       wait++;
