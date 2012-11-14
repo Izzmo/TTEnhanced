@@ -1,4 +1,7 @@
 (function() {
+  $('<div style="position: absolute; color: white; font-size: 10px; top: 0px; padding-left: 5px; z-index: 10000;">TTEnhanced will be updated for the Turntable.fm soon!</div>').appendTo('body');
+  return;
+  
   if(window.tte != undefined && window.tte.ui != undefined)
     turntable.removeEventListener("message", window.tte.ui.listener);
   
@@ -259,7 +262,7 @@
           break;
           
         case 'speak':
-          var list = window.tte.ttObj.users[window.tte.ttObj.selfId].name;
+          var list = window.tte.ttObj.users[window.turntable.user.id].name;
           $.each(window.tte.ui.settings.notifierKeywords, function(i, v) {
             if(v != undefined && v.length > 0)
               list += '|' + v;
@@ -300,7 +303,7 @@
               if(uid == '')
                 total--; //person not in the room, so don't take him into account'
               else {
-                if($.inArray(uid, window.tte.ttObj.djIds) >= 0)
+                if($.inArray(uid, window.tte.ttObj.djids) >= 0)
                   allOnDeck++;
               }
             });
@@ -706,7 +709,7 @@
       // bug in turntable.fm where it will randomly clear all users from the room and will cause this method to error out
       if(!(window.turntable.user.id in window.tte.ttObj.users)) return;
       
-      var list = window.tte.ttObj.users[window.tte.ttObj.selfId].name,
+      var list = window.tte.ttObj.users[window.turntable.user.id].name,
           c = $(b).find(".text");
       $.each(window.tte.ui.settings.notifierKeywords, function(i, v) {
         if(v != undefined && v.length > 0)
@@ -1503,10 +1506,6 @@
   }
   
   $(document).ready(function() {
-    if ($('#header').length) {
-      $('<div style="position: absolute; color: white; font-size: 10px; top: 0px; padding-left: 5px; z-index: 10000;">TTEnhanced will be updated for the Turntable.fm soon!</div>').appendTo('body');
-      return;
-    }
     var wait = 0,
     roomCheck = setInterval(function() {
       wait++;
