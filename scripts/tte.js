@@ -20,6 +20,27 @@
     settings: {
       boot_linkers: true
     },
+	showStats: function(userid) {
+		window.open('http://ttstats.info/user/' + userid, '_newtab');
+	},
+	setNote: function(userid) {
+		window.tte.eventManager.queue({ api: 'getNote', userid: userid }, function(response) {
+			var $html = $(util.buildTree([ActionModal, {
+				title: "Set User Note", 
+				submitCallback: function() {
+					var val = $('.textarea').val();
+					window.tte.eventManager.queue({api: 'setNote', userid: userid, note: val});
+					turntable.hideOverlay();
+				}
+			}, ["div.field", {}, "Enter any information you would like about this user below.",
+				["br"],
+				["textarea.textarea", {maxlength: 400} ],
+				["br"]]]));
+				  
+			$html.find('.textarea').val(response.note);
+			turntable.showOverlay($html);
+		});              
+	},	
     isAfk: function(uid) { 
      for(var prop in window.tte.timers) {
         if(window.tte.timers[prop].userid == uid) {
@@ -678,100 +699,54 @@
         this.updateChatScroll();
       }
     },
-	guestOptions: function(a, d) {
-		var b = ["div.guestOptions.options",
-		{
-		  event: {
-			mouseover: function() {
-			  if (d.guestOptionsHoverTimer) {
-				clearTimeout(d.guestOptionsHoverTimer);
-			  }
-			},
-			mouseout: function() {
-			  d.guestOptionsHoverTimer = setTimeout(function() {
-				d.removeGuestListMenu();
-			  }, 1000);
-			}
-		  }
-		}];	
-		b.push(Room.layouts.guestOption("View Profile", "profile", a.userid, d));
-		b.push(Room.layouts.guestOption("Report User", "report_user", a.userid, d));
-		
-		//TTE Edit
-		
-		b.push(Room.layouts.guestOption("View TTStats", function() {
-			window.open('http://ttstats.info/user/' + a.userid, '_newtab');
-		}));
-		b.push(Room.layouts.guestOption("Set Note", function() {
-			window.tte.eventManager.queue({ api: 'getNote', userid: a.userid }, function(response) {
-				var $html = $(util.buildTree(
-				  ["div.modal", {},
-					["div.close-x", { event: { click: util.hideOverlay } } ],
-					["h1", "Set User Note"],
-					["br"],
-					["div", {}, "Enter any information you would like about this user below."],
-					["br"],
-					["textarea#userNoteField.textarea", {maxlength: 400} ],
-					["br"], ["br"],
-					["div.ok-button.centered-button", {
-						event: {
-						  click: function() {
-							var val = $('#userNoteField').val();
-							window.tte.eventManager.queue({api: 'setNote', userid: a.userid, note: val});
-							util.hideOverlay();
-						  }
-						}
-					  }
-					]
-				  ]
-				));
-				$html.find('#userNoteField').val(response.note);
-				util.showOverlay($html);
-			  });              
-		}));
-		
-		//-- End
-		
-		
-		if (a.userid == zUeQmFIoOO.myuserid && d.isDj()) {
-		  b.push(Room.layouts.guestOption("Skip My Song", "stop_song", a.userid, d));
-		  b.push(Room.layouts.guestOption("Quit DJing", "rem_dj", a.userid, d));
-		}
-		var c = d.roomData.metadata.moderator_id;
-		if (a.userid !== turntable.user.id && (d.isMod() || d.isSuperuser())) {
-		  if (turntable.user.acl >= a.acl) {
-			b.push(Room.layouts.guestOption("Boot User", "boot_user", a.userid, d));
-			if (d.isMod(a.userid)) {
-			  b.push(Room.layouts.guestOption("Remove Moderator", "rem_moderator", a.userid, d));
-			} else {
-			  b.push(Room.layouts.guestOption("Make a Moderator", "add_moderator", a.userid, d));
-			}
-		  }
-		  if (d.isDj(a.userid)) {
-			b.push(Room.layouts.guestOption("Remove DJ", "remove_dj", a.userid, d));
-		  }
-		}
-		if (a.userid != zUeQmFIoOO.myuserid) {
-		  if (a.fanof) {
-			b.push(Room.layouts.guestOption("Unfan", "remove_fan", a.userid, d));
-		  } else {
-			b.push(Room.layouts.guestOption("Become a Fan", "become_fan", a.userid, d));
-		  }
-		  b.push(Room.layouts.guestOption("Send Private Message", function() {
-			d.handlePM({
-			  senderid: a.userid
-			}, true);
-		  }));
-		}
-		return ["div.guestOptionsContainer.contextual-popup", {}, b, ["div.guestOptionsNib.nib",
-		{
-		  event: {
-			click: function() {
-			  d.removeGuestListMenu();
-			}
-		  }
-		}, ["div.guestOptionsNibArrow"]]];
-	},
+	makeTooltip: function(l, j, i) {
+      var k = window.tte.ttObj.userMap[l];
+      var m = "<br>" + util.commafy(k.points) + " DJ point" + (k.points == 1 ? "" : "s") + "<br>" + util.commafy(k.fans || 0) + " fan" + (k.fans == 1 ? "" : "s");
+      var n = '<div class="option" onclick="window.tte.callback(\'become_fan\',\'' + k.userid + '\')">Become a Fan</div>';
+      var g = '<div class="option" onclick="window.tte.callback(\'remove_fan\',\'' + k.userid + '\')">Unfan</div>';
+      var r = '<div class="option" onclick="window.tte.callback(\'remove_dj\',\'' + k.userid + '\')">Remove DJ</div>';
+      var f = '<div class="option" onclick="window.tte.callback(\'boot_user\',\'' + k.userid + '\')">Boot User</div>';
+      var o = '<div class="option" onclick="window.tte.callback(\'add_moderator\',"' + k.userid + '\')">Make a Moderator</div>';
+      var h = '<div class="option" onclick="window.tte.callback(\'rem_moderator\',"' + k.userid + '\')">Remove Moderator</div>';
+      var e = '<div class="option" onclick="window.tte.callback(\'stop_song\')">Skip My Song</div>';
+      var q = '<div class="option" onclick="window.tte.callback(\'rem_dj\')">Quit DJing</div>';
+	  
+	  var ttStats = '<div class="option" onclick="window.tte.showStats(\'' + k.userid + '\')">TTStats</div>';
+	  var notes = '<div class="option" onclick="window.tte.setNote(\'' + k.userid + '\')">Set Note</div>';
+	  
+      var p = m + "</div>";	  
+	  p += ttStats + notes;
+	  
+      if (j) {
+        if (k.userid == turntable.user.id) {
+          p += q;
+          if (window.tte.ttRoomObjs.current_dj && window.tte.ttRoomObjs.current_dj[0] == turntable.user.id) {
+            p += e;
+          }
+        }
+      }
+      if (k.userid != turntable.user.id && window.tte.ttObj.isMod()) {
+        if (turntable.user.acl >= k.acl) {
+          p += f;
+          if (window.tte.ttObj.isMod(k.userid)) {
+            p += h;
+          } else {
+            p += o;
+          }
+        }
+        if (j) {
+          p += r;
+        }
+      }
+      if (k.userid != turntable.user.id) {
+        if (k.fanof) {
+          p += g;
+        } else {
+          p += n;
+        }
+      }
+      return '<div class="tooltip avatar-tipsy floating-menu ' + ((i) ? i : "") + '"><div class="option special" onclick="window.tte.callback(\'profile\',\'' + k.userid + "')\"><b>" + util.safeText(k.name) + "</b>" + p + "</div>";
+    },
     updateSongCount: function() {
       var count = 0;
       for(fid in turntable.playlist.songsByFid)
@@ -815,8 +790,7 @@
         window.tte.ttRoomObjs.add_listener = function() {return;}
       }
     },
-    buddyListBuddy: function(d, g, f) {
-		
+    buddyListBuddy: function(d, g, f) {		
       var b = ("roomName" in d && !f) ? ["div.room", { }, d.roomName] : "";
       var a = function() {
         d.fanof = true;
@@ -1014,11 +988,11 @@
           // update sizes on DJ Queue window
           $playlist = $('#playlist');
           $view = $playlist.find('div.mainPane');
-          $playlist.height(height-1).parent().parent().height(height-1);
-          $view.height(height-26-36);
+          //$view.height(height-26-36);
           $('#songs').height(height-26-36-38);
           if(!$('#totalSongs').length) {
-            $playlist.append('<div class="chatBar"><div class="guestListSize"><span id="totalSongs">0</span> songs in your queue.</div></div>');
+		    var s = "style=\"top: " + ($("#songs").height() + 36) + "px;\"";
+		    $playlist.append('<div class="right-panel-header" ' + s + '><span class="title"><span id="totalSongs">0</span> songs in your queue.</span></div>');
             if(window.tte.ui.updateSongCount() == 0)
               setTimeout(function() {window.tte.ui.updateSongCount();}, 10000);
           }
@@ -1354,6 +1328,10 @@
     
     // update append Chat message function
     window.tte.ttObj.appendChatMessage = window.tte.ui.appendChatMessage;
+	
+	// update tipsy tooltip
+	window.tte.ttRoomObjs.makeTooltip = window.tte.ui.makeTooltip;
+	
 	
 	//Update Guest Options
 	//window.Room.layouts.guestOptions = window.tte.ui.guestOptions;
