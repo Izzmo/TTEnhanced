@@ -1,6 +1,5 @@
 (function() {
-  //$('<div style="position: absolute; color: white; font-size: 10px; top: 0px; padding-left: 5px; z-index: 10000;">TTEnhanced will be updated for the Turntable.fm soon!</div>').appendTo('body');
-  //return;
+  $('<div style="position: absolute; color: white; font-size: 10px; top: 0px; padding-left: 5px; z-index: 10000;">TTEnhanced is in testing mode you may want to disable it.</div>').appendTo('body');
   String.prototype.format = function() {
 	var args = arguments;
 	return this.replace(/{(\d+)}/g, function(match, number) { 
