@@ -1,11 +1,18 @@
 (function() {
   //$('<div style="position: absolute; color: white; font-size: 10px; top: 0px; padding-left: 5px; z-index: 10000;">TTEnhanced will be updated for the Turntable.fm soon!</div>').appendTo('body');
   //return;
+  String.prototype.format = function() {
+	var args = arguments;
+	return this.replace(/{(\d+)}/g, function(match, number) { 
+		return typeof args[number] != 'undefined' ? args[number] : match;
+	});
+  };
   
   if(window.tte != undefined && window.tte.ui != undefined)
     turntable.removeEventListener("message", window.tte.ui.listener);
   
   window.tte = {
+    imageLocation: "http://www.pinnacleofdestruction.net/tt/images/",
     ttObj: null,
     attempts: 0,
     timers: [],
@@ -155,8 +162,7 @@
       }
       return 0;
     },
-    isNumeric: function(vTestValue)
-    {
+    isNumeric: function(vTestValue) {
       // put the TEST value into a string object variable
       var sField = new String($.trim(vTestValue));
       
@@ -174,6 +180,17 @@
       // made it through the loop - we have a number
       return true;
     }
+  };
+  
+  window.tte.layouts = {
+     guestListName: function(type, vote, user) {
+		var a = 'https://s3.amazonaws.com/static.turntable.fm/roommanager_assets/avatars/' + user.avatarid + '/scaled/55/headfront.png';	 
+		return ["div.guest.{0}.{1}.{2}#{3}".format(type, vote, (user.fanof && type == 'user' ? 'fan' : ''), user.userid),
+		   ["div.guest-avatar", { style: { "background-image": "url(" + a + ")" }}],
+		   ["div.icons"],["div.idletime"],
+		   ["div.guestName", user.name], ["div.guestArrow"]];
+	 }
+  
   };
 
   window.tte.ui = {
@@ -249,13 +266,12 @@
           // Send notification
           window.tte.ui.sendNotification(window.tte.ttObj.currentSong.djname + ' started playing:', window.tte.ttObj.currentSong.metadata.song + ' by ' + window.tte.ttObj.currentSong.metadata.artist);
 
-          break;
-          
+          break;          
         case 'registered':
           window.tte.ui.guestListAddUser(d.user[0]);
           $('#' + d.user[0].userid).addClass('tte-joined');
           setTimeout(function() { var userid = d.user[0].userid; if(!$('#' + userid).hasClass('tte-joined')) return; $('#' + userid).removeClass('tte-joined'); }, 5000);
-          $("span#totalUsers").text(window.tte.ui.numUsers());
+          window.tte.ui.updateUserCount();
           window.tte.timers.push({userid: d.user[0].userid, time: new Date().getTime()});
           break;
           
@@ -267,7 +283,7 @@
             if(!$('#' + userid).hasClass('left')) return;
             
             window.tte.ui.guestListRemoveUser(userid);
-            $("span#totalUsers").text(window.tte.ui.numUsers());
+            window.tte.ui.updateUserCount();
             for(var prop in window.tte.timers) {
               if(window.tte.timers[prop].userid == userid) {
                 delete window.tte.timers[prop];
@@ -395,7 +411,6 @@
     override_set_dj_points: function(points) {
       setTimeout(function(){window.tte.ui.updateVoteDisplays(window.tte.ui.upvotes,window.tte.ui.downvotes,window.tte.ui.snags,points);},250);
     },
-
     updateVoteDisplays: function(upvotes,downvotes,snags,points) {
       if(points < 0) {points = Number(window.tte.ttRoomObjs.current_dj[3].html().split(" ")[0].replace(',',''));}
       var suffix = " points";
@@ -423,13 +438,10 @@
       }
       $('div.songlog:first div.song:first div.tteTrackHistoryVotes:first').html('+' + upvotes + '/-' + downvotes + '<br/>&#9829; ' + snags);
     },
-
-    numUsers: function() {
-      var count = 0;
-      for(var prop in window.tte.ttObj.users)
-        count++;
-      return count;
-    },
+    updateUserCount: function() {
+	  var p = Object.keys(window.tte.ttObj.users).length;
+      $("span#totalUsers").text(p + (p === 1 ? " person here" : " people here"));	
+	},
     userSort: function (j, i) {
       var h = j.name.toLowerCase(),
           k = i.name.toLowerCase();
@@ -442,7 +454,6 @@
           fans = [],
           users = [],
           g = $(".guest-list-container .guests");
-      return;
       // get each type
       for (var f in window.tte.ttObj.users) {
         if(window.tte.ttObj.isDj(f))
@@ -458,7 +469,7 @@
       }
 
       var c = g.find(".guest.selected").data("id");
-      g.find("div").remove();
+      g.children().remove();
 
       // sort
       window.tte.ui.guestListAddUsers(g, 'super', supers.sort(window.tte.ui.userSort));
@@ -469,16 +480,14 @@
       //window.tte.ui.guestListAddUsers(g, 'user', $.merge(fans.sort(window.tte.ui.userSort), users.sort(window.tte.ui.userSort)));
       
       if(fans.length > 0)
-        $('#desc-user > div.desc').hide();
+        $('#desc-user > div.desc').hide(); //TODO remove this
       
       $.each(window.tte.ttObj.upvoters, function(i, v) {
         g.find('#' + v).addClass('voteup');
       });
-      
-      $("span#totalUsers").text(window.tte.ui.numUsers());
+      window.tte.ui.updateUserCount();
     },
     guestListAddUsers: function(obj, type, userList) {
-	  return;
       var title = '',
           html = '';
           
@@ -503,13 +512,19 @@
           title = 'Users';
           break;
       }
-      
-      groupContainer = $('<div id="desc-' + type + '" ' + ((!userList.length) ? 'style="display:none;"' : '') + '></div>');
-      groupHeader = $('<div class="desc black-right-header"' + ((type == 'super') ? ' style="display: none;"' : '') + '><div class="desc-inner header-text">' + title + '</div></div>');
-      groupContainer.append(groupHeader);
+	  
+	  //util.buildTree(
+	  
+	  
+      groupContainer = $(util.buildTree(["div.separator", ["div.text", type, ["div#desc-" + type]]]));
+	  groupContent = groupContainer.find("#desc-" + type);
+	  if(!userList.length)
+		groupContainer.css({display: "none"});
+		
       $.each(userList, function(i, v) {
-        groupContainer.append(window.tte.ui.guestListGetUserHtml(type, v));
+        groupContent.append(window.tte.ui.guestListGetUserHtml(type, v));
       });
+	  groupContainer.append(groupContent);
       obj.append(groupContainer);
     },
     guestListAddUser: function(user) {
@@ -561,67 +576,41 @@
         icons += '<img src="http://static.turntable.fm.s3.amazonaws.com/images/room/mod_icon.png" alt="Moderator" />';
       
       var vote = '';
+	  
       if($.inArray(user.userid, window.tte.downvoters) >= 0)
         vote = 'votedown';
       else if($.inArray(user.userid, window.tte.ttObj.upvoters) >= 0)
-        vote = 'voteup';
-      
-      return  $('<div class="guest ' + type + ' ' + vote + ' ' + ((user.fanof && type == user) ? 'fan' : '') + '" id="' + user.userid + '">'
-            + '<div class="guestAvatar"><img src="https://s3.amazonaws.com/static.turntable.fm/roommanager_assets/avatars/' + user.avatarid + '/scaled/55/headfront.png" height="20" alt="" /></div>'
-            + '<div class="icons">' + icons + ((window.tte.ttObj.users[user.userid].fanof) ? '<img src="http://www.pinnacleofdestruction.net/tt/images/heart_small.png" alt="Fan" />' : '') + '</div>'
-            + '<div class="idletime"></div>'
-            + '<div class="guestName">' + user.name + '</div>'
-            + '</div>')
-            .bind('click', function() {
+	  vote = 'voteup';		
+	  icons += (user.fanof ? '<img src="' + window.tte.imageLocation + 'heart_small.png" alt="Fan" />' : '');
+		
+	  var h = $(util.buildTree(window.tte.layouts.guestListName(type, vote, user)));
+	  h.find('.icons').html(icons);
+
+      return  h.bind('click', function() {
               var $this = $(this),
                   l = Room.layouts.guestOptions(window.tte.ttObj.users[$this.attr('id')], window.tte.ttObj);
               
               delete l[3]; // remove the arrow from showing
               
-              l[2].push([
-                'a.guestOption',
+              l[2].push(['a.guestOption.option',
                 {
                   event: {click: function(e) {
                     e.preventDefault();
-                    window.tte.eventManager.queue({api: 'getNote', userid: $this.attr('id')}, function(response) {
-                      var $html = $(util.buildTree(
-                        ["div.modal", {},
-                          ["div.close-x", {event: {click: util.hideOverlay}}],
-                          ["h1", "Set User Note"],
-                          ["br"],
-                          ["div", {}, "Enter any information you would like about this user below."],
-                          ["br"],
-                          ["textarea#userNoteField.textarea", {maxlength: 400} ],
-                          ["br"], ["br"],
-                          ["div.ok-button.centered-button", {event: {click: function() {
-                                  var val = $('#userNoteField').val(), uid = $this.attr('id');
-                                  window.tte.eventManager.queue({api: 'setNote', userid: uid, note: val});
-                                  util.hideOverlay();
-                                }
-                              }
-                            }
-                          ]
-                        ]
-                      ));
-                      $html.find('#userNoteField').val(response.note);
-                      util.showOverlay($html);
-                    });
+                    window.tte.setNote($this.attr('id'));
                     $(this).parent().remove();
                   }},
                   href: '#'
-                },
-                'Set Note'
+                }, 'Set Note'
               ],
-              ['a.guestOption',
+              ['a.guestOption.option',
                 {
                   event: {click: function(e) {
                     e.preventDefault();
-                    window.open('http://ttstats.info/user/' + $this.attr('id'), '_newtab');
+					window.tte.showStats($this.attr('id'))
                     $(this).parent().remove();
                   }},
                   href: '#'
-                },
-                'Look-up on ttStats'
+                }, 'Look-up on ttStats'
               ]);
               
               if(window.tte.ttObj.isDj($this.attr('id'))) {
