@@ -10,13 +10,13 @@ $('#tteui-msg').bind('tteEventWeb', function() {
       if(data.code == 'get') {
         chrome.extension.sendRequest({api: 'settings', code: 'get'}, function(response) {
           var res = JSON.parse(response);
-          switchDisplay(res.settings.displayType);
+        //  switchDisplay(res.settings.displayType);
           window.sendData($.extend({'msgId': msgId}, res));
         });
       }
       else {
-        if(data.settings.displayType != undefined)
-          switchDisplay(data.settings.displayType);
+        //if(data.settings.displayType != undefined)
+         // switchDisplay(data.settings.displayType);
         chrome.extension.sendRequest(data);
       }
       break;

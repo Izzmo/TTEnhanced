@@ -8,44 +8,27 @@
 
     function TurntableProxy(turntable) {
       this.turntable = turntable;
-      this.updateRoomManager = __bind(this.updateRoomManager, this);
-
+      this.updateCallback = __bind(this.updateCallback, this);
       this.updateRoom = __bind(this.updateRoom, this);
-
       this.updateRoom();
-      this.updateRoomManager();
+      this.updateCallback();
     }
 
     TurntableProxy.prototype.isReady = function() {
-      return (this.room != null) && (this.roomManager != null);
+      return (this.room != null) && (this.callback != null);
     };
 
     TurntableProxy.prototype.updateRoom = function() {
-      var key, value, _ref;
-      _ref = this.turntable;
-      for (key in _ref) {
-        if (!__hasProp.call(_ref, key)) continue;
-        value = _ref[key];
-        if ((value != null) && value.hasOwnProperty("currentDj")) {
-          this.room = value;
-        }
-      }
+	  this.room = window.tte.ttObj;
       if (this.room == null) {
         return setTimeout(this.updateRoom, 100);
       }
     };
 
-    TurntableProxy.prototype.updateRoomManager = function() {
-      var key, value;
-      for (key in window) {
-        if (!__hasProp.call(window, key)) continue;
-        value = window[key];
-        if ((value != null) && value.hasOwnProperty("become_dj")) {
-          this.roomManager = value;
-        }
-      }
-      if (!this.roomManager) {
-        return setTimeout(this.updateRoomManager, 100);
+    TurntableProxy.prototype.updateCallback = function() {
+	  this.callback = window.tte.callback;
+      if (!this.callback) {
+        return setTimeout(this.updateCallback, 100);
       }
     };
 
@@ -65,12 +48,6 @@
         username = "";
       }
       return this.room.appendChatMessage('', username, text, "action");
-    };
-
-    TurntableProxy.prototype.toggleMute = function() {
-      this.roomManager.set_volume(this.roomManager.volume_bars ? 0 : this.roomManager.last_volume_bars);
-      this.roomManager.callback("set_volume", this.roomManager.volume_bars);
-      return this.appendActionMessage((this.roomManager.volume_bars ? "Unmuted" : "Muted"), "Sound: ");
     };
 
     TurntableProxy.prototype.sendSocketMessage = function(data, handler) {
@@ -154,11 +131,15 @@
     };
 
     TurntableProxy.prototype.awesomeSong = function() {
-      return this.roomManager.callback("upvote");
+      return this.callback("upvote");
     };
+	
+	TurntableProxy.prototype.toggleMute = function() {
+		return this.room.toggleMute();
+	}
 
     TurntableProxy.prototype.lameSong = function() {
-      return this.roomManager.callback("downvote");
+      return this.callback("downvote");
     };
 
     return TurntableProxy;
@@ -308,8 +289,8 @@
           $("body").append(suggest);
           offset = textInput.offset();
           $(suggest).css({
-            left: "" + (offset.left + 1) + "px",
-            top: "" + (offset.top + 1 - $(suggest).outerHeight()) + "px"
+            left: offset.left + 1 + "px",
+            top: offset.top - 5 - $(suggest).outerHeight(true) + "px"
           });
           $(".suggestedName").click(function(option) {
             return _this.chooseSuggestedCommand(false, $(option.target).text());

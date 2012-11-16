@@ -1,4 +1,14 @@
 
+.guest-avatar {
+  width:40px;
+  height:14px;
+  background-repeat:no-repeat;
+  background-position:center center;
+  background-size:auto 14px;
+  float:left;
+  margin-top:7px;
+}
+
 .guest-list-container .guests .voteup:nth-child(odd) {
   background-image: linear-gradient(right, rgb(255,255,255) 10%, rgb(180,217,180) 100%);
   background-image: -o-linear-gradient(right, rgb(255,255,255) 10%, rgb(180,217,180) 100%);
