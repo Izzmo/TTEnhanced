@@ -1425,9 +1425,8 @@
     
     // Auto-Focus on Type
     $('body').on('keypress', function(e) {
-      if(e.charCode >= 32 && e.charCode <= 127 && !$('input, select, textarea').is(':focus') && $('div#overlay').css('display') == 'none') {
-        $('form.input-box input').focus();
-      }
+      if(e.charCode >= 32 && e.charCode <= 127 && !$('input, select, textarea').is(':focus') && $('div#overlay').css('display') == 'none')
+        $('#chat-form textarea').focus();
     });
     
     // add 'To Bottom' button on queue
