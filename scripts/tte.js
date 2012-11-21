@@ -1,7 +1,4 @@
-(function() {
-  $('<div style="position: absolute; color: white; font-size: 10px; top: 0px; padding-left: 5px; z-index: 10000;">TTEnhanced will be updated for the Turntable.fm soon!</div>').appendTo('body');
-  return;
-  
+(function() {  
   if(window.tte != undefined && window.tte.ui != undefined)
     turntable.removeEventListener("message", window.tte.ui.listener);
   
@@ -557,7 +554,7 @@
               delete l[3]; // remove the arrow from showing
               
               l[2].push([
-                'a.guestOption',
+                'a.guestOption.option',
                 {
                   event: {click: function(e) {
                     e.preventDefault();
@@ -590,7 +587,7 @@
                 },
                 'Set Note'
               ],
-              ['a.guestOption',
+              ['a.guestOption.option',
                 {
                   event: {click: function(e) {
                     e.preventDefault();
@@ -799,7 +796,7 @@
         //delete l[2][0];
         l[2].splice(2, 1, Room.layouts.guestOption("Send Private Message", function() { turntable.buddyList.room.handlePM({ senderid: d.userid }, true); }));
         // add Go To Room item
-        l[2].splice(4, 0, ['a.guestOption',
+        l[2].splice(4, 0, ['a.guestOption.option',
             {
               event: {click: function(e) {
                 e.preventDefault();
@@ -810,14 +807,14 @@
             },
             'Look-up on ttStats'
           ],
-          ["a#" + d.userid + ".guestOption", {
+          ["a#" + d.userid + ".guestOption.option", {
             event: {'click': function(e) {
               e.preventDefault();
               turntable.setPage(d.roomShortcut, d.roomId);
               $('div.guestOptionsContainer').remove();
               turntable.buddyList.toggle();
           }}, href: '#'}, "Go To Room"],
-          ['a.guestOption',
+          ['a.guestOption.option',
             {
               event: {click: function(e) {
                 e.preventDefault();
@@ -853,7 +850,7 @@
         
         // add favorite item
         if($.inArray(d.userid, window.tte.ui.settings.favorites) >= 0) {
-          l[2].splice(4, 0, ["a#" + d.userid + ".guestOption", {event: {'click': function(e) {
+          l[2].splice(4, 0, ["a#" + d.userid + ".guestOption.option", {event: {'click': function(e) {
             e.preventDefault();
             var userid = $(this).attr('id');
             window.tte.eventManager.queue({api: 'favorite.remove', 'userid': userid});
@@ -864,7 +861,7 @@
           }}, href: '#'}, "Un-Favorite User"]);
         }
         else {
-          l[2].splice(4, 0, ["a#" + d.userid + ".guestOption", {event: {'click': function(e) {
+          l[2].splice(4, 0, ["a#" + d.userid + ".guestOption.option", {event: {'click': function(e) {
             e.preventDefault();
             var userid = $(this).attr('id');
             window.tte.eventManager.queue({api: 'favorite.add', 'userid': userid});
@@ -1222,10 +1219,13 @@
   };
   
   window.tte.ui.init = function() {
+    /**
     for(var prop in window.turntable) {
       if(window.turntable[prop] != undefined && window.turntable[prop].hasOwnProperty('currentDj'))
         window.tte.ttObj = window.turntable[prop];
     }
+    **/
+   window.tte.ttObj = window.turntable.buddyList.room;
     for(var prop in window.tte.ttObj) {
       if(prop.indexOf('Callback') >= 0 && prop != 'sampleCallback') {
         window.tte.callback = window.tte.ttObj[prop];
@@ -1284,12 +1284,12 @@
     }
     
     // Add TTEnhanced under TT Logo
-    $('#top-panel div.header').find('#tte-logo').remove().end().append($('<div id="tte-logo">Enhanced</div>'));
+    $('#header div.logo').find('#tte-logo').remove().end().append($('<div id="tte-logo">Enhanced</div>'));
     
     // rewrite guest list update function
-    window.tte.ttObj.__updateGuestList = window.tte.ttObj.updateGuestList;
-    window.tte.ttObj.updateGuestList = function() {return;};
-    window.tte.ui.guestList();
+    //window.tte.ttObj.__updateGuestList = window.tte.ttObj.updateGuestList;
+    //window.tte.ttObj.updateGuestList = function() {return;};
+    //window.tte.ui.guestList();
     
     // add votes to top bar
     $('#top-panel div.votes').first().remove();
@@ -1303,7 +1303,7 @@
     }
 
     // override set_dj_points
-    window.tte.ttRoomObjs.set_dj_points = window.tte.ui.override_set_dj_points;
+    //window.tte.ttRoomObjs.set_dj_points = window.tte.ui.override_set_dj_points;
     
     turntable.addEventListener("message", window.tte.ui.listener);
     
@@ -1313,7 +1313,7 @@
     }
     
     // update append Chat message function
-    window.tte.ttObj.appendChatMessage = window.tte.ui.appendChatMessage;
+    //window.tte.ttObj.appendChatMessage = window.tte.ui.appendChatMessage;
     
     // add animations button to menu
     $('#tte-settings-menu-animations-icon').parent().remove();
@@ -1378,7 +1378,7 @@
     
     // add settings button to menu
     $('#tte-settings-menu-settings').remove();
-    $('#menuh').find('div.menuItem').last().before('<div id="tte-settings-menu-settings" class="menuItem">TTEnhanced</div>');
+    $('#settings-dropdown li.option').eq(3).after('<li id="tte-settings-menu-settings" class="option">TTEnhanced</li>');
     $('#tte-settings-menu-settings').bind('click', function() {
       var settings = $(util.buildTree(
         ["div#tteui-settings.settingsOverlay.modal", {},
@@ -1419,7 +1419,8 @@
       fields.append('<div><span class="tteOptionLabel">Display</span><select name="tteUiStyle" id="tteUiStyle"><option value="-1" ' + ((window.tte.ui.settings.displayType != -1) ? '' : 'selected') + '>Default</option><option value="0" ' + ((window.tte.ui.settings.displayType != 0) ? '' : 'selected') + '>3 Columns</option><option value="1" ' + ((window.tte.ui.settings.displayType != 1) ? '' : 'selected') + '>2 Columns - Queue/Guest Stacked</option><option value="2" ' + ((window.tte.ui.settings.displayType != 2) ? '' : 'selected') + '>2 Columns - Queue/Chat Stacked</option></select></div>');
       fields.append('<div><span class="tteOptionLabel">Notification Keywords:</span><input type="text" id="tteChatKeywords"/><p>If you would like to receive notifications for keywords other than your own username, you can enter them here -- comma delimited.</p></div>');
       fields.find('#tteChatKeywords').val(window.tte.ui.settings.notifierKeywords.join(','));
-      util.showOverlay(settings);
+      // need to make modal dialogs own popup now
+      //$('body').append(settings);
     });
     
     // Auto-Focus on Type
