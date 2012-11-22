@@ -412,6 +412,8 @@
       return (k > h) ? -1 : (k < h) ? 1 : 0;
     },
     guestList: function () {
+      return;
+      
       var supers = [],
           mods = [],
           djs = [],
@@ -454,6 +456,8 @@
       $("span#totalUsers").text(window.tte.ui.numUsers());
     },
     guestListAddUsers: function(obj, type, userList) {
+      return;
+      
       var title = '',
           html = '';
           
@@ -488,6 +492,8 @@
       obj.append(groupContainer);
     },
     guestListAddUser: function(user) {
+      return;
+      
       var type, $s;
       if(window.tte.ttObj.isDj(user.userid))
         type = 'dj';
@@ -523,12 +529,16 @@
       return text;
     },
     guestListRemoveUser: function(uid) {
+      return;
+      
       var $e = $('#' + uid);
       if($e.parent().find('div.guest').length == 1)
         $e.parent().hide();
       $e.remove();
     },
     guestListGetUserHtml: function(type, user) {
+      return;
+      
       var icons = '';
       if(window.tte.ttObj.isSuperuser(user.userid))
         icons += '<img src="http://static.turntable.fm.s3.amazonaws.com/images/room/superuser_icon.png" alt="Super User" />';
