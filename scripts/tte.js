@@ -1510,7 +1510,7 @@
           ]
         ));
         html.find('div.field').html("See what's new in this version: <br /><br />" + window.tte.ui.newUpdatesMsg);
-        util.showOverlay(html);
+        //util.showOverlay(html);
       }
     });
   }
