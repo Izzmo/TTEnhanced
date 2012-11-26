@@ -12,6 +12,20 @@ To install the extension onto your browser, click the link below and follow the 
 
 ## Changelog
 
+### v3.0.0
+*BETA Release: This update is to bring the extension back online along with some features.*
+_Currently working features:_
+* Buddy List Favorites, Drop Down Lists
+* Auto-Focus chat bar
+* Notifications
+* Chat Highlighting
+* Number of Songs in Queue
+_Soon to come_
+* Settings Window
+* Command Line Interface
+* Queue Features
+* Moveable/Dragable Interface
+
 ### v2.3.4
 * Bug Fix: Could not see songs at bottom of queue.
 * Bug Fix: When clicking on some context menu items, the page would refresh.

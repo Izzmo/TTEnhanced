@@ -159,9 +159,9 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '2.3.6',
+    version: '3.0.0',
     newUpdatesMsg: '<ul>'
-                  +'<li>Quick update to account for the immiment Turntable.fm update.</li>'
+                  +'<li>BETA UPDATE: Quick update to get some features back up and running. More updates to come.</li>'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
