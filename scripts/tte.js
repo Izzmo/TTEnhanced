@@ -262,7 +262,7 @@
         case 'speak':
           var list = tte.ttObj.users[window.turntable.user.id].name;
           $.each(tte.ui.settings.notifierKeywords, function(i, v) {
-            if(v != undefined && v.length > 0)
+            if(typeof v != 'undefined' && v.length > 0)
               list += '|' + v;
           });
           if(d.text.search(new RegExp(list, 'i')) >= 0)
