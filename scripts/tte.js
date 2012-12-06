@@ -1,5 +1,5 @@
 (function() {  
-  if(tte != undefined && tte.ui != undefined)
+  if(typeof tte != 'undefined' && typeof tte.ui != 'undefined')
     turntable.removeEventListener("message", tte.ui.listener);
   
   tte = {
@@ -159,7 +159,7 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '3.0.3',
+    version: '3.0.4',
     newUpdatesMsg: '<ul>'
                   +'<li>Bug Fix: Settings Popup now works again.</li>'
                   +'<li>Bug Fix: Disable animations (with menu item) now works again.</li>'
