@@ -159,9 +159,10 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '3.0.0',
+    version: '3.0.1',
     newUpdatesMsg: '<ul>'
-                  +'<li>BETA UPDATE: Quick update to get some features back up and running. More updates to come.</li>'
+                  +'<li>Bug Fix: Settings Popup now works again.</li>'
+                  +'<li>Bug Fix: Disable animations (with menu item) now works again.</li>'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
