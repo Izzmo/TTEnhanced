@@ -159,7 +159,7 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '3.0.2',
+    version: '3.0.3',
     newUpdatesMsg: '<ul>'
                   +'<li>Bug Fix: Settings Popup now works again.</li>'
                   +'<li>Bug Fix: Disable animations (with menu item) now works again.</li>'
