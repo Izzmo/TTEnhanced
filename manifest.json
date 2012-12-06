@@ -1,6 +1,6 @@
 {
   "name": "TTEnhanced",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "manifest_version": 2,
   "description": "An extension for Turntable.fm which widens the operating area and also adds a lot of extra 'bonus' features.",
   "browser_action": {
@@ -20,6 +20,9 @@
      "styles/style-stack-1.css",
      "styles/style-stack-2.css",
      "styles/style.css",
-     "images/*"
+     "images/chat_bg_big.png",
+     "images/chat_bg_med.png",
+     "images/go-bottom.png",
+     "images/notes.png"
    ]
 }

@@ -159,7 +159,7 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '3.0.1',
+    version: '3.0.2',
     newUpdatesMsg: '<ul>'
                   +'<li>Bug Fix: Settings Popup now works again.</li>'
                   +'<li>Bug Fix: Disable animations (with menu item) now works again.</li>'
@@ -1495,17 +1495,14 @@
       // setup new version notifier
       if(tte.ui.version !== tte.ui.settings.currentVersion) {
         tte.eventManager.queue({api: 'set_version', version: tte.ui.version});
-        var html = $(util.buildTree(
-          ["div.modal", {},
-            ["div.close-x", {event: {click: util.hideOverlay}}],
-            ["h1.tte-updated", "New Version " + tte.ui.version + "!"],
-            ["br"],
-            ["div.field", {}, ''],
-            ["div.ok-button.centered-button", {event: {click: util.hideOverlay}} ]
-          ]
-        ));
-        html.find('div.field').html("See what's new in this version: <br /><br />" + tte.ui.newUpdatesMsg);
-        //util.showOverlay(html);
+        
+        util.buildTree([
+          Modal,
+          { title: 'TTEnhanced Updated! v' + tte.ui.version },
+          ["div.fields", {} ]
+        ], tte);
+        tte.modal.$node.find('div.fields').css('padding', '0px 10px').html('<p style="margin-bottom: 15px;">See what\'s new in this version:</p>' + tte.ui.newUpdatesMsg);
+        tte.modal.show();
       }
     });
   }
