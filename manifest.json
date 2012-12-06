@@ -20,9 +20,6 @@
      "styles/style-stack-1.css",
      "styles/style-stack-2.css",
      "styles/style.css",
-     "images/chat_bg_big.png",
-     "images/chat_bg_med.png",
-     "images/go-bottom.png",
-     "images/notes.png"
+     "images/*"
    ]
 }
