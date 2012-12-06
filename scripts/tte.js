@@ -770,17 +770,17 @@
     setAnimations: function(on) {
       if(on) {
         $('#tte-settings-menu-animations-icon').parent().find('div').first().css({backgroundImage: 'url(http://www.pinnacleofdestruction.net/tt/images/check.png)'});
-        window.tte.ttRoomObjs.add_listener = window.tte.ttRoomObjs.__add_listener;
-        delete window.tte.ttRoomObjs.__add_listener;
+        window.tte.ttRoomObjs.addListener = window.tte.ttRoomObjs.__addListener;
+        delete window.tte.ttRoomObjs.__addListener;
         for(var user in window.tte.ttObj.users)
-          window.tte.ttObj.refreshRoomUser(window.tte.ttObj.users[user]);
+          window.tte.ttRoomObjs.addListener(window.tte.ttObj.users[user]);
       }
       else {
         $('#tte-settings-menu-animations-icon').parent().find('div').first().css({backgroundImage: 'url(http://www.pinnacleofdestruction.net/tt/images/cross.png)'});
-        for(var listener in window.tte.ttRoomObjs.listeners)
-          window.tte.ttRoomObjs.rem_listener({userid: listener});
-        window.tte.ttRoomObjs.__add_listener = window.tte.ttRoomObjs.add_listener;
-        window.tte.ttRoomObjs.add_listener = function() {return;}
+        for(var user in window.tte.ttObj.users)
+          window.tte.ttRoomObjs.removeListener(window.tte.ttObj.users[user]);
+        window.tte.ttRoomObjs.__addListener = window.tte.ttRoomObjs.addListener;
+        window.tte.ttRoomObjs.addListener = function() {return;}
       }
     },
     buddyListBuddy: function(d, g, f) {
@@ -1243,7 +1243,7 @@
       }
     }
     for(var prop in window.tte.ttObj) {
-      if(window.tte.ttObj[prop] != undefined && window.tte.ttObj[prop].hasOwnProperty('set_dj_points'))
+      if(window.tte.ttObj[prop] != undefined && typeof window.tte.ttObj[prop].floor == 'object')
         window.tte.ttRoomObjs = window.tte.ttObj[prop];
     }
     
