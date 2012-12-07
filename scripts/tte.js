@@ -164,10 +164,9 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '3.0.6',
+    version: '3.0.7',
     newUpdatesMsg: '<ul>'
-                  +'<li>Bug Fix: Added back vote counters (now appear as inlays on buttons).</li>'
-                  +'<li>Bug Fix: Command Line Interface is working again.</li>'
+                  +'<li>Bug Fix: Snag counter was not incrementing.</li>'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
@@ -177,7 +176,7 @@
       switch(d.command) {
         case 'snagged':
           var $snags = tte.ui.votes.find('div.snags');
-          $snags.html(parseInt($snags.html())++);
+          $snags.html(++parseInt($snags.html()));
           tte.isAfk(d.senderid);
 
           // Update Snag count

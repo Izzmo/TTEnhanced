@@ -12,6 +12,12 @@ To install the extension onto your browser, click the link below and follow the 
 
 ## Changelog
 
+### v3.0.1-7
+* Added back in vote counters which now appear on the lame/awesome buttons. The snag/heart counter appears in the middle of the song board.
+* The Command-line interface is now working again with suggestions.
+* Notifcations working.
+* New overlays in use with Turntable.fm's new UI.
+
 ### v3.0.0
 *BETA Release: This update is to bring the extension back online along with some features.*
 _Currently working features:_
