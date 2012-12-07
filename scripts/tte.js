@@ -159,10 +159,9 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '3.0.4',
+    version: '3.0.5',
     newUpdatesMsg: '<ul>'
-                  +'<li>Bug Fix: Settings Popup now works again.</li>'
-                  +'<li>Bug Fix: Disable animations (with menu item) now works again.</li>'
+                  +'<li>Bug Fix: Added back vote counters (now appear as inlays on buttons).</li>'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
@@ -171,8 +170,8 @@
     listener: function(d) {
       switch(d.command) {
         case 'snagged':
-          var val = parseInt(tte.ui.votes.find('span:last-child').html());
-          tte.ui.votes.find('span:last-child').html(++val);
+          var $snags = tte.ui.votes.find('div.snags');
+          $snags.html(parseInt($snags.html())++);
           tte.isAfk(d.senderid);
 
           // Update Snag count
@@ -181,8 +180,8 @@
           break;
           
         case 'update_votes':
-          $(tte.ui.votes.find('span')[1]).html(d.room.metadata.upvotes);
-          $(tte.ui.votes.find('span')[0]).html(d.room.metadata.downvotes);
+          tte.ui.votes.find('div.awesomes').html(d.room.metadata.upvotes);
+          tte.ui.votes.find('div.lames').html(d.room.metadata.downvotes);
           
           // Get upvotes count
           tte.ui.upvotes = d.room.metadata.upvotes;
@@ -211,9 +210,7 @@
           break;
           
         case 'newsong':
-          $(tte.ui.votes.find('span')[0]).html(0);
-          $(tte.ui.votes.find('span')[1]).html(0);
-          tte.ui.votes.find('span:last-child').html(0);
+          tte.ui.votes.find('div.awesomes, div.lames, div.snags').html(0);
           tte.downvoters = [];
           tte.ui.guestList();
           tte.ui.updateSongCount();
@@ -400,7 +397,6 @@
       }
       $('div.songlog:first div.song:first div.tteTrackHistoryVotes:first').html('+' + upvotes + '/-' + downvotes + '<br/>&#9829; ' + snags);
     },
-
     numUsers: function() {
       var count = 0;
       for(var prop in tte.ttObj.users)
@@ -1303,13 +1299,13 @@
     //tte.ui.guestList();
     
     // add votes to top bar
-    $('#top-panel div.votes').first().remove();
-    tte.ui.votes = $('<div class="votes"><img src="http://www.pinnacleofdestruction.net/tt/images/arrow_down_red.png" alt="Lames" /> <span>0</span> <img src="http://www.pinnacleofdestruction.net/tt/images/arrow_up_green.png" alt="Awesomes" /> <span>' + tte.ttObj.upvoters.length + '</span> <img src="http://www.pinnacleofdestruction.net/tt/images/heart_votes.png" alt="Song Snags" /> <span>0</span></div>');
-    $('#top-panel').find('div.info').append(tte.ui.votes);
+    $('#tte-votes').remove();
+    tte.ui.votes = $('<div id="tte-votes"><div class="lames">0</div><div class="awesomes">' + tte.ttObj.upvoters.length + '</div><div class="snags">0</div></div>');
+    $('#bigboard').append(tte.ui.votes);
     if(tte.ttObj.upvoters.length == 0) {
       setTimeout(function() {
-        $(tte.ui.votes.find('span')[1]).html(tte.ttObj.upvoters.length);
-        tte.ui.guestList();
+        tte.ui.votes.find('div.awesomes').html(tte.ttObj.upvoters.length);
+        //tte.ui.guestList();
       }, 2000);
     }
 
@@ -1319,9 +1315,8 @@
     turntable.addEventListener("message", tte.ui.listener);
     
     // setup AFK Timers
-    for(prop in tte.ttObj.users) {
+    for(prop in tte.ttObj.users)
       tte.isAfk(prop);
-    }
     
     // update append Chat message function
     //tte.ttObj.appendChatMessage = tte.ui.appendChatMessage;
