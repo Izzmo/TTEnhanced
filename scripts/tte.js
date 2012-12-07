@@ -1,3 +1,8 @@
+/**
+ * NOTES:
+ * notification popup: http://fiddle.jshell.net/qmxqW/
+ */
+
 (function() {  
   if(typeof tte != 'undefined' && typeof tte.ui != 'undefined')
     turntable.removeEventListener("message", tte.ui.listener);
@@ -159,7 +164,7 @@
       notifierKeywords: [],
       displayType: 0
     },
-    version: '3.0.5',
+    version: '3.0.6',
     newUpdatesMsg: '<ul>'
                   +'<li>Bug Fix: Added back vote counters (now appear as inlays on buttons).</li>'
                   +'<li>Bug Fix: Command Line Interface is working again.</li>'
@@ -1301,8 +1306,9 @@
     
     // add votes to top bar
     $('#tte-votes').remove();
-    tte.ui.votes = $('<div id="tte-votes"><div class="lames">0</div><div class="awesomes">' + tte.ttObj.upvoters.length + '</div><div class="snags">0</div></div>');
-    $('#bigboard').append(tte.ui.votes);
+    var $bigboard = $('#bigboard'), $lameButton = $('#lame-button'), $awesomeButton = $('#awesome-button'), scale = parseInt($bigboard.width()) / 376;
+    tte.ui.votes = $('<div id="tte-votes" style="width: ' + $bigboard.width() + 'px;"><div class="lames" style="top: ' + Math.round(10 * scale) + 'px; left: ' + $lameButton.css('left') + '; width: ' + $lameButton.width() + 'px;">0</div><div class="awesomes" style="right: ' + $awesomeButton.css('right') + '; width: ' + $awesomeButton.width() + 'px; top: ' + Math.round(10 * scale) + 'px;">' + tte.ttObj.upvoters.length + '</div><div class="snags" style="left: ' + Math.round(($bigboard.width() - 24) / 2) + 'px">0</div></div>');
+    $bigboard.append(tte.ui.votes);
     if(tte.ttObj.upvoters.length == 0) {
       setTimeout(function() {
         tte.ui.votes.find('div.awesomes').html(tte.ttObj.upvoters.length);

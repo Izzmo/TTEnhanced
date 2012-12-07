@@ -368,13 +368,12 @@ div#tteui-settings div.spots > div #tteSpotSavingBootMessage {
 #tte-votes div.awesomes,
 #tte-votes div.lames {
   position: absolute;
-  top: 10px;
+  top: 7px;
   width: 40px;
   text-align: center;
 }
 
 #tte-votes div.awesomes {
-  left: 324px;
 }
 
 #tte-votes div.lames {
