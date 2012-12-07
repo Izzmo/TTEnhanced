@@ -162,6 +162,7 @@
     version: '3.0.5',
     newUpdatesMsg: '<ul>'
                   +'<li>Bug Fix: Added back vote counters (now appear as inlays on buttons).</li>'
+                  +'<li>Bug Fix: Command Line Interface is working again.</li>'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
