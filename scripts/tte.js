@@ -191,9 +191,9 @@
           // Get upvotes count
           tte.ui.upvotes = d.room.metadata.upvotes;
 
-          var $user = $('#' + d.room.metadata.votelog[0][0]);
-          if(!$user.length)
-            $user = guestListAddUser(d.room.metadata.votelog[0][0]);
+          //var $user = $('#' + d.room.metadata.votelog[0][0]);
+          //if(!$user.length)
+            //$user = guestListAddUser(d.room.metadata.votelog[0][0]);
           if(d.room.metadata.votelog[0][1] == "up") {
             $user.addClass('voteup').removeClass('votedown');
             var pos = $.inArray(d.room.metadata.votelog[0][0], tte.downvoters)
