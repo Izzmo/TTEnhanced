@@ -167,6 +167,7 @@
     version: '3.0.7',
     newUpdatesMsg: '<ul>'
                   +'<li>Bug Fix: Snag counter was not incrementing.</li>'
+                  +'<li>Bug Fix: Stop Animations not working properly.</li>'
                   +'</ul>',
     upvotes: 0,
     downvotes: 0,
@@ -176,11 +177,10 @@
       switch(d.command) {
         case 'snagged':
           var $snags = tte.ui.votes.find('div.snags');
-          $snags.html(++parseInt($snags.html()));
+          $snags.html(++tte.ui.snags);
           tte.isAfk(d.senderid);
 
           // Update Snag count
-          tte.ui.snags += 1;
           tte.ui.updateVoteDisplays(tte.ui.upvotes,tte.ui.downvotes,tte.ui.snags,-1);
           break;
           
@@ -773,7 +773,9 @@
       if(on) {
         $('#tte-settings-menu-animations-icon').css({backgroundImage: 'url(http://www.pinnacleofdestruction.net/tt/images/check.png)'});
         tte.ttRoomObjs.addListener = tte.ttRoomObjs.__addListener;
+        tte.ttObj.addListener = tte.ttObj.__addListener;
         delete tte.ttRoomObjs.__addListener;
+        delete tte.ttObj.__addListener;
         for(var user in tte.ttObj.users)
           tte.ttRoomObjs.addListener(tte.ttObj.users[user]);
       }
@@ -782,7 +784,9 @@
         for(var user in tte.ttObj.users)
           tte.ttRoomObjs.removeListener(tte.ttObj.users[user]);
         tte.ttRoomObjs.__addListener = tte.ttRoomObjs.addListener;
+        tte.ttObj.__addListener = tte.ttObj.addListener;
         tte.ttRoomObjs.addListener = function() {return;}
+        tte.ttObj.addListener = function() {return;}
       }
     },
     buddyListBuddy: function(d, g, f) {
